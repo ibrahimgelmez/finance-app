@@ -1,13 +1,11 @@
-import { QueryProvider } from "@/lib/tanstack-query";
-import { Stack } from "expo-router";
+import { Slot } from 'expo-router';
+import { AuthProvider } from '@/context/auth';
 
-export default function RootLayout() {
+export default function Root() {
+  // Set up the auth context and render our layout inside of it.
   return (
-    <QueryProvider>
-      <Stack>
-        <Stack.Screen name="index" />
-        <Stack.Screen name="products" />
-      </Stack>
-    </QueryProvider>
+    <AuthProvider>
+      <Slot />
+    </AuthProvider>
   );
 }
