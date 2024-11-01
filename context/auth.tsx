@@ -9,7 +9,7 @@ export function useAuth() {
 }
 
 export function AuthProvider({ children }: React.PropsWithChildren) {
-  const [user, setUser] = useState<string | undefined>('asd');
+  const [user, setUser] = useState<string | undefined>('');
   const [userInfo, setUserInfo] = useState<any | undefined>(null);
   const [rememberMe, setRememberMe] = useState(false); // Remember me state
 
