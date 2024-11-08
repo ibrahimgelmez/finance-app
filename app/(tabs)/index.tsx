@@ -4,6 +4,7 @@ import StockChart from '../../components/ui/graphics/stockChart'; // Ensure corr
 import Header from '@/components/ui/header';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import StockCard from '@/components/ui/StockCard';
+import MyStocks from './myStock';
 
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
@@ -54,35 +55,7 @@ const Index = () => {
         </ScrollView>
       </View>
 
-      <StockCard name={'Şpoti'} ticker={'asd'} price={22} width={50} change={-2} chartData={[
-       { value: 2 },
-       { value: 11 },
-       { value: 29 },
-       { value: 30 },
-       { value: 88 },
-       { value: 29 },
-       { value: 30 },
-      ]} iconUrl={'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRslcO84eWfXP_4Ucd4Yfz6B8uqJmHaTo0iTw&s'}/>
-       <StockCard name={'Face'} ticker={'asd'} price={22} width={50} change={-2} chartData={[
-       { value: 2 },
-       { value: 11 },
-       { value: 29 },
-       { value: 30 },
-       { value: 88 },
-       { value: 88 },
-       { value: 29 },
-       { value: 30 },
-      ]} iconUrl={'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRslcO84eWfXP_4Ucd4Yfz6B8uqJmHaTo0iTw&s'}/>
-       <StockCard name={'Tesla'} ticker={'asd'} price={22} width={50} change={-2} chartData={[
-       { value: 2 },
-       { value: 11 },
-       { value: 29 },
-       { value: 30 },
-        { value: 88 },
-       { value: 29 },
-       { value: 30 },
-       { value: 88 },
-      ]} iconUrl={'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRslcO84eWfXP_4Ucd4Yfz6B8uqJmHaTo0iTw&s'}/>
+   <MyStocks />
     </ScrollView>
             </SafeAreaView>
   );

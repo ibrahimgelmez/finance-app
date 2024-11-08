@@ -1,51 +1,103 @@
 import React from 'react';
-import { View, Text, Image, Dimensions } from 'react-native';
-import { LineChart } from 'react-native-gifted-charts';
+import { View, Text, Image, StyleSheet } from 'react-native';
+import { LineChart } from 'react-native-chart-kit';
 
-const screenWidth = Dimensions.get('window').width;
-
-const StockCard = ({ name, ticker, price, change, iconUrl, chartData,width }) => {
-  const isPositive = change > 0;
+const StockCard = ({ name, ticker, price, change, chartData, iconUrl }) => {
+  const chartClosePrices = chartData.map((data) => data.close);
 
   return (
-    <View className="bg-gray-900 p-3 rounded-lg mb-4">
-      <View className="flex-row justify-around">
-        <View className="flex-row items-center">
-          <Image source={{ uri: iconUrl }} style={{ width: 48, height: 48, marginRight: 10, marginLeft:-15 }} />
-          <View>
-            <Text className="text-white text-lg font-semibold">{name}</Text>
-            <Text className="text-gray-400">{ticker}</Text>
-          </View>
-          <View className='top-3 mr-2 ml-4 px-2'>
+    <View style={styles.cardContainer}>
+      {/* Left Section - Icon */}
+      <Image source={{ uri: iconUrl }} style={styles.icon} />
+
+      {/* Middle Section - Name and Ticker */}
+      <View style={styles.middleSection}>
+        <Text style={styles.nameText}>{name}</Text>
+        <Text style={styles.tickerText}>{ticker}</Text>
+
+      </View>
+      {chartClosePrices.length > 0 && (
+          <View style={styles.chartContainer}>
             <LineChart
-              data={chartData}
-              initialSpacing={0}
-              spacing={10} // Adjust spacing as necessary
-              hideDataPoints
-              thickness={2}
-              hideRules
-              hideYAxisText
-              showXAxisIndices={false}
-              hideAxesAndRules
-              yAxisColor="#0BA5A4"
-              verticalLinesColor="rgba(14,164,164,0.5)"
-              xAxisColor="#0BA5A4"
-              color="#0BA5A4"
-              width={width} // Adjust width as necessary
-              height={20} // Smaller height for the chart
-              // Add some space above the chart
+              data={{
+                datasets: [{ data: chartClosePrices }],
+              }}
+              width={60} // Chart width to match the small chart in the example
+              height={40} // Adjusted height for compact view
+              withDots={false}
+              withVerticalLabels={false}
+              withHorizontalLabels={false}
+              withInnerLines={false}
+              withOuterLines={false}
+              chartConfig={{
+                backgroundColor: '#000',
+                backgroundGradientFrom: '#000',
+                backgroundGradientTo: '#000',
+                color: (opacity = 1) => `rgba(0, 255, 0, ${opacity})`,
+              }}
+              style={{ paddingRight: 0 }}
             />
           </View>
-        </View>
-        <View className="items-end">
-          <Text className="text-white text-lg font-semibold">${price.toFixed(2)}</Text>
-          <Text className={`${isPositive ? 'text-green-500' : 'text-red-500'} text-sm`}>
-            {isPositive ? '+' : '-'}{Math.abs(change).toFixed(2)}%
-          </Text>
-        </View>
+        )}
+      {/* Right Section - Price, Change, and Chart */}
+      <View style={styles.rightSection}>
+        {/* Price */}
+        <Text style={styles.priceText}>${price}</Text>
+        {/* Change */}
+        <Text style={[styles.changeText, { color: change > 0 ? '#00FF00' : '#FF0000' }]}>
+          {change > 0 ? '+' : ''}{change}%
+        </Text>
       </View>
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  cardContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#1E1E1E',
+    padding: 16,
+    borderRadius: 10,
+    marginBottom: 12,
+  },
+  icon: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+  },
+  middleSection: {
+    flex: 1,
+    marginLeft: 12,
+  },
+  nameText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  tickerText: {
+    color: '#888',
+    fontSize: 14,
+  },
+  rightSection: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  priceText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginRight: 8, // Space between price and chart
+  },
+  chartContainer: {
+    width: 60, // Ensures the chart stays centered
+    alignItems: 'center', 
+    right:'100%'
+  },
+  changeText: {
+    fontSize: 14,
+    marginLeft: 8, // Space between chart and change percentage
+  },
+});
 
 export default StockCard;
