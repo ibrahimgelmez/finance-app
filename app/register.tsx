@@ -1,4 +1,4 @@
-import React from 'react';
+import React , {useState} from 'react';
 import {
   View,
   Text,
@@ -7,7 +7,17 @@ import {
   SafeAreaView,
 } from 'react-native';
 
-const Register = () => {
+
+const RegisterScreen = () => {
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  const handleRegister = () => {
+    // Registration logic here
+    console.log({ name, email, password });
+  };
+
   return (
     <SafeAreaView className=" flex-1 items-center bg-gray-900 px-4">
       <View className="w-full p-1 ">
@@ -45,4 +55,4 @@ const Register = () => {
   );
 };
 
-export default Register;
+export default RegisterScreen;
