@@ -9,7 +9,7 @@ export function useAuth() {
 }
 
 export function AuthProvider({ children }: React.PropsWithChildren) {
-  const [user, setUser] = useState<string | undefined>('asd');
+  const [user, setUser] = useState<string | undefined>('ibo');
   const [userInfo, setUserInfo] = useState<any | undefined>(null);
   const [rememberMe, setRememberMe] = useState(false); // Remember me state
 
@@ -42,7 +42,7 @@ export function AuthProvider({ children }: React.PropsWithChildren) {
       }
 
       if (!user && rootSegment !== 'auth') {
-        router.replace('/login');
+        router.replace('/register');
       } else if (user && rootSegment !== '(tabs)') {
         router.replace('/');
       }
