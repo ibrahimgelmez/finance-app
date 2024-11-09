@@ -1,7 +1,7 @@
 import { Slot } from 'expo-router';
 import { AuthProvider } from '@/context/auth';
 import Index from './(tabs)';
-import  { StockProvider } from '@/context/stock';
+import { StockProvider } from '@/context/stock';
 import Discovery from './(tabs)/discovery';
 import MyStocks from './(tabs)/myStock';
 
@@ -10,7 +10,7 @@ export default function Root() {
   return (
     <AuthProvider>
       <StockProvider>
-      <Index />
+        <Slot />
       </StockProvider>
     </AuthProvider>
   );

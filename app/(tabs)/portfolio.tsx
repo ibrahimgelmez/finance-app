@@ -3,6 +3,10 @@ import { View, Text, SafeAreaView, ScrollView, Dimensions } from 'react-native';
 import { LineChart } from 'react-native-chart-kit';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { FontAwesome5 } from '@expo/vector-icons'; // Make sure to install this library
+import Header from '@/components/ui/header';
+import PortfolioHeader from '@/components/ui/portfolioHeader';
+import MyStocks from './myStock';
+import MyPositions from '@/components/ui/myPositions';
 
 const screenWidth = Dimensions.get('window').width;
 
@@ -39,98 +43,96 @@ const Portfolio = () => {
   ]);
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: '#1a1a1a' }}>
+    <SafeAreaView style={{ flex: 1 }}>
       <ScrollView>
         {/* Portfolio Value Chart */}
         <View
-          className="bg-transparent"
+          className="bg-transparent flex justify-center"
           style={{
             borderBottomLeftRadius: 16,
             borderBottomRightRadius: 16,
           }}
         >
-          <Text
-            style={{
-              color: 'white',
-              textAlign: 'center',
-              fontSize: 24,
-              fontWeight: 'bold',
-            }}
-          >
-            My Portfolio
-          </Text>
-          <LineChart
-            data={{
-              labels: [
-                'Monday',
-                'Tuesday',
-                'Wednesday',
-                'Thursday',
-                'Friday',
-                'Saturday',
-                'Sunday',
-              ],
-              datasets: [
-                {
-                  data: [10000, 20000, 27750, 22250, 33000, 30000, 36000],
-                },
-              ],
-            }}
-            width={screenWidth}
-            height={220}
-            chartConfig={{
-              backgroundColor: '#fff',
-              backgroundGradientFrom: '#1a1a1a',
-              backgroundGradientTo: '#1a1a1a',
-              decimalPlaces: 0, // No decimal places on the chart values
-              color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-              labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-              style: {
-                borderRadius: 16,
-              },
-              propsForDots: {
-                r: '4',
-                strokeWidth: '1',
-                stroke: '#ffa726',
-              },
-            }}
-            bezier
-            style={{ marginTop: 12 }}
-            withDots
-            withInnerLines={false}
-            withOuterLines={false}
-            withVerticalLabels={false}
-            withHorizontalLabels={false}
-            fromZero
-          />
+          <PortfolioHeader screenName={'My portfolio'} />
 
-          <View className="border-2 border-white bg-white  rounded-lg p-4 w-full max-w-sm mx-auto">
-            <Text
-              style={{
-                textAlign: 'center',
-                color: 'black',
-                fontSize: 32,
-                fontWeight: 'bold',
+          {/* Chart */}
+          <View className="bg-[#1ad392] pt-4">
+            <LineChart
+              data={{
+                labels: [
+                  'Monday',
+                  'Tuesday',
+                  'Wednesday',
+                  'Thursday',
+                  'Friday',
+                  'Saturday',
+                  'Sunday',
+                ],
+                datasets: [
+                  {
+                    data: [10000, 20000, 27750, 22250, 33000, 30000, 36000],
+                  },
+                ],
               }}
-            >
-              ${portfolioValue.total.toFixed(2)}
-            </Text>
-            <Text
-              style={{
-                textAlign: 'center',
-                color: '#28a745',
-                fontSize: 16,
-                marginTop: 4,
+              width={screenWidth}
+              height={220}
+              chartConfig={{
+                backgroundColor: '#fff',
+                backgroundGradientFrom: '#1ad392',
+                backgroundGradientTo: '#1ad392',
+                decimalPlaces: 0, // No decimal places on the chart values
+                color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+                labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+                style: {
+                  borderRadius: 16,
+                },
+                propsForDots: {
+                  r: '4',
+                  strokeWidth: '1',
+                  stroke: '#ffa726',
+                },
               }}
-            >
-              +${portfolioValue.change.toFixed(2)} (
-              {portfolioValue.percentageChange}%)
-            </Text>
+              bezier
+              style={{ marginTop: 12 }}
+              withDots
+              withInnerLines={false}
+              withOuterLines={false}
+              withVerticalLabels={false}
+              withHorizontalLabels={false}
+              fromZero
+            />
+          </View>
+
+          {/* Account Balance */}
+          <View className="bg-black py-3 pt-8">
+            <View className="border-2 border-[#1f2126]  bg-[#20222a] w-[86%]  rounded-3xl py-4   mx-auto">
+              <Text
+                style={{
+                  textAlign: 'center',
+                  color: 'white',
+                  fontSize: 32,
+                  fontWeight: 'bold',
+                }}
+              >
+                ${portfolioValue.total.toFixed(2)}
+              </Text>
+              <Text
+                style={{
+                  textAlign: 'center',
+                  color: '#28a745',
+                  fontSize: 16,
+                  marginTop: 4,
+                }}
+              >
+                +${portfolioValue.change.toFixed(2)} (
+                {portfolioValue.percentageChange}%)
+              </Text>
+            </View>
           </View>
         </View>
 
         {/* My Account */}
-        <View className="bg-[#333] p-4 mt-4 rounded-2xl">
+        <View className="bg-black p-4 pt-4 ">
           <Text className="text-white text-xl font-semibold">My Account</Text>
 
           {/* Account Details Grid */}
@@ -210,10 +212,8 @@ const Portfolio = () => {
         {/* My Positions */}
         <View
           style={{
-            backgroundColor: '#333',
-            padding: 16,
-            marginTop: 16,
-            borderRadius: 16,
+            backgroundColor: 'black',
+            paddingTop: 16,
           }}
         >
           <View
@@ -221,6 +221,8 @@ const Portfolio = () => {
               flexDirection: 'row',
               justifyContent: 'space-between',
               alignItems: 'center',
+              paddingHorizontal: 12,
+              paddingBottom: 8,
             }}
           >
             <Text style={{ color: 'white', fontSize: 18, fontWeight: '600' }}>
@@ -244,30 +246,7 @@ const Portfolio = () => {
               placeholderStyle={{ color: '#aaa' }}
             />
           </View>
-          {positions.map((position, index) => (
-            <View
-              key={index}
-              style={{
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                marginTop: 8,
-              }}
-            >
-              <Text style={{ color: '#ccc' }}>{position.shortName}</Text>
-              <Text style={{ color: 'white' }}>
-                ${position.regularMarketPrice.toFixed(2)}{' '}
-                <Text
-                  style={
-                    position.regularMarketChangePercent > 0
-                      ? { color: '#28a745' }
-                      : { color: '#d32f2f' }
-                  }
-                >
-                  ({position.regularMarketChangePercent.toFixed(2)}%)
-                </Text>
-              </Text>
-            </View>
-          ))}
+          <MyPositions />
         </View>
       </ScrollView>
     </SafeAreaView>

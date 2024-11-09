@@ -1,19 +1,20 @@
 import { View, Text } from 'react-native';
 import React from 'react';
-import FontAwesome from '@expo/vector-icons/FontAwesome';
-
-const Header = () => {
+import Ionicons from '@expo/vector-icons/Ionicons';
+const PortfolioHeader = ({ screenName }) => {
   return (
     <View
       style={{
         flex: 1,
         flexDirection: 'row',
         padding: 5,
+        paddingHorizontal: 16,
+        paddingVertical: 4,
         alignItems: 'center',
         backgroundColor: '#1ad392',
       }}
     >
-      <FontAwesome name="meetup" size={24} color="#FFFFFF" />
+      <Ionicons name="logo-closed-captioning" size={24} color="black" />
       <Text
         style={{
           fontSize: 24,
@@ -22,7 +23,7 @@ const Header = () => {
           marginLeft: 10,
         }}
       >
-        Speye
+        {screenName}
       </Text>
       <View
         style={{
@@ -32,16 +33,14 @@ const Header = () => {
           alignItems: 'center',
         }}
       >
-        <FontAwesome
-          name="bell"
-          size={24}
-          color="#FFFFFF"
-          style={{ marginRight: 10 }}
+        <Ionicons
+          name="ellipsis-horizontal-circle-outline"
+          size={32}
+          color="white"
         />
-        <FontAwesome name="heart" size={24} color="#FFFFFF" />
       </View>
     </View>
   );
 };
 
-export default Header;
+export default PortfolioHeader;
