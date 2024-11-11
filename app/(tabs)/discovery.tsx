@@ -18,14 +18,22 @@ const Discovery = () => {
 
   const handleSearchNameChange = (text) => {
     setSearchName(text);
-    if (text) {
-      fetchStocksDataByName([text]); // Search by single company name
+    if (text.trim()) {
+      // Boş olmayan arama metni girildiyse
+      fetchStocksDataByName([text]);
     } else {
-      // Display default stocks if input is empty
+      // Arama metni boşsa, varsayılan hisse senetlerini göster
       fetchStocksDataByName(defaultStocks);
     }
   };
 
+  // Helper function to safely handle numbers
+  const safeToFixed = (value, decimalPlaces = 2) => {
+    if (value === null || value === undefined || isNaN(value)) {
+      return '0.00';
+    }
+    return parseFloat(value).toFixed(decimalPlaces);
+  };
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#1ad392' }}>
       <ScrollView style={{ backgroundColor: '#191a1f', flex: 1 }}>
@@ -68,15 +76,15 @@ const Discovery = () => {
                 key={index}
                 name={stock?.shortName || stock?.longName}
                 ticker={stock?.symbol}
-                price={stock?.regularMarketPrice}
+                price={safeToFixed(stock?.regularMarketPrice)}  
                 width={50}
-                change={stock?.regularMarketChange}
+                change={safeToFixed(stock?.regularMarketChange)}  
                 chartData={[
                   { value: stock?.regularMarketDayLow },
                   { value: stock?.regularMarketPrice },
                   { value: stock?.regularMarketDayHigh },
                 ]}
-                iconUrl={`https://assets.parqet.com/logos/symbol/${stock?.symbol}?format=jpg`}
+                iconUrl={`https://img.logo.dev/ticker/${stock?.symbol}?token=pk_L243nCyGQ6KNbSvmAhSl0A`}
               />
             ))
           ) : (

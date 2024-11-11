@@ -3,7 +3,10 @@ import { View, Text, Image, StyleSheet } from 'react-native';
 import { LineChart } from 'react-native-chart-kit';
 
 const StockCard = ({ name, ticker, price, change, chartData, iconUrl }) => {
-  const chartClosePrices = chartData?.map((data) => data.close) || []; // Fallback to empty array if no data
+  // chartData'daki geçerli sayıları almak için filtreleme işlemi
+  const chartClosePrices = chartData
+    ? chartData.map((data) => data.close).filter((value) => !isNaN(value)) // NaN değerleri filtrele
+    : []; // Eğer chartData yoksa boş dizi döndür
 
   return (
     <View style={styles.cardContainer}>
@@ -15,29 +18,31 @@ const StockCard = ({ name, ticker, price, change, chartData, iconUrl }) => {
         <Text style={styles.nameText}>{name}</Text>
         <Text style={styles.tickerText}>{ticker}</Text>
       </View>
+
       {chartClosePrices.length > 0 && (
-          <View style={styles.chartContainer}>
-            <LineChart
-              data={{
-                datasets: [{ data: chartClosePrices }],
-              }}
-              width={60} // Chart width for compact display
-              height={40} // Adjusted height for compact view
-              withDots={false}
-              withVerticalLabels={false}
-              withHorizontalLabels={false}
-              withInnerLines={false}
-              withOuterLines={false}
-              chartConfig={{
-                backgroundColor: '#000',
-                backgroundGradientFrom: '#000',
-                backgroundGradientTo: '#000',
-                color: (opacity = 1) => `rgba(0, 255, 0, ${opacity})`,
-              }}
-              style={{ paddingRight: 0 }}
-            />
-          </View>
-        )}
+        <View style={styles.chartContainer}>
+          <LineChart
+            data={{
+              datasets: [{ data: chartClosePrices }],
+            }}
+            width={60} // Chart width for compact display
+            height={40} // Adjusted height for compact view
+            withDots={false}
+            withVerticalLabels={false}
+            withHorizontalLabels={false}
+            withInnerLines={false}
+            withOuterLines={false}
+            chartConfig={{
+              backgroundColor: '#000',
+              backgroundGradientFrom: '#000',
+              backgroundGradientTo: '#000',
+              color: (opacity = 1) => `rgba(0, 255, 0, ${opacity})`,
+            }}
+            style={{ paddingRight: 0 }}
+          />
+        </View>
+      )}
+
       {/* Right Section - Price, Change, and Chart */}
       <View style={styles.rightSection}>
         {/* Price */}
@@ -47,9 +52,6 @@ const StockCard = ({ name, ticker, price, change, chartData, iconUrl }) => {
         <Text style={[styles.changeText, { color: change > 0 ? '#00FF00' : '#FF0000' }]}>
           {change > 0 ? '+' : ''}{change}%
         </Text>
-
-        {/* Chart */}
-       
       </View>
     </View>
   );
