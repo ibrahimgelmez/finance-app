@@ -10,32 +10,40 @@ const MyStocks = () => {
 
   const { chartData, fetchChartData } = useStock();
 
+  // Helper function to format dates as YYYY-MM-DD
+  const formatDate = (date) => date.toISOString().split('T')[0];
+
+  // Calculate today's and yesterday's dates
+  const today = new Date();
+  const yesterday = new Date(today);
+  yesterday.setDate(today.getDate() - 1);
+
   const fetchStockData = async () => {
-    console.log("Starting fetchStockData"); // Log the start of the function
+    console.log("Starting fetchStockData");
     try {
       const response = await fetch('http://154.53.166.2:5024/api/Stock', {
         headers: {
-          'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiIzIiwidW5pcXVlX25hbWUiOiJzYWZhayIsIm5iZiI6MTczMDk4MzY1OCwiZXhwIjoxNzMzNTc1NjU4LCJpYXQiOjE3MzA5ODM2NTh9.cI3kBx-JXWbnBJjNFQCW7EEj_yKdFNCVNWy9SUlaFFk`,
+          'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiIyIiwidW5pcXVlX25hbWUiOiJzYWZhayIsIm5iZiI6MTczMTI2NTQ5NSwiZXhwIjoxNzMzODU3NDk1LCJpYXQiOjE3MzEyNjU0OTV9.ZZLP0COxvpy3pDRvN_eQwXWGT6eaOuHaRYtECNmm7cE`,
         },
       });
 
-      console.log("Response received:", response); // Log the raw response object
+      console.log("Response received:", response);
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
       const data = await response.json();
-      console.log("Fetched stock data:", data); // Log the fetched data
+      console.log("Fetched stock data:", data);
       setStockData(data);
 
-      // Fetch chart data for each stock after fetching stock data
+      // Fetch chart data for each stock with today's and yesterday's dates
       data.forEach((stock) => {
-        fetchChartData(stock.symbol, "2024-10-08", "2024-10-09", "1h");
+        fetchChartData(stock.symbol, formatDate(yesterday), formatDate(today), "1h");
       });
     } catch (error) {
       setError("Failed to fetch stock data.");
-      console.error("Error fetching stock data:", error); // Log the error
+      console.error("Error fetching stock data:", error);
     } finally {
       setLoading(false);
     }
@@ -75,10 +83,10 @@ const MyStocks = () => {
             key={stock?.id}
             name={stock?.name}
             ticker={stock?.symbol}
-            price={stock?.currentPrice ?? stock?.purchasePrice} // Use currentPrice if available, otherwise purchasePrice
+            price={stock?.currentPrice ?? stock?.purchasePrice}
             change={stock?.salePrice ? ((stock?.salePrice - stock?.purchasePrice) / stock?.purchasePrice * 100).toFixed(2) : 'N/A'}
-            chartData={chartData} // Pass the actual chart data
-            iconUrl={`https://assets.parqet.com/logos/symbol/${stock?.symbol}?format=jpg`}
+            chartData={chartData[stock.symbol]} // Access symbol-specific chart data
+            iconUrl={`https://img.logo.dev/ticker/${stock.symbol}?token=pk_L243nCyGQ6KNbSvmAhSl0A`}
             width={60}
             height={200}
           />

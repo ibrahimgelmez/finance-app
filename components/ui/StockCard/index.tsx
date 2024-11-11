@@ -3,7 +3,7 @@ import { View, Text, Image, StyleSheet } from 'react-native';
 import { LineChart } from 'react-native-chart-kit';
 
 const StockCard = ({ name, ticker, price, change, chartData, iconUrl }) => {
-  const chartClosePrices = chartData.map((data) => data.close);
+  const chartClosePrices = chartData?.map((data) => data.close) || []; // Fallback to empty array if no data
 
   return (
     <View style={styles.cardContainer}>
@@ -14,7 +14,6 @@ const StockCard = ({ name, ticker, price, change, chartData, iconUrl }) => {
       <View style={styles.middleSection}>
         <Text style={styles.nameText}>{name}</Text>
         <Text style={styles.tickerText}>{ticker}</Text>
-
       </View>
       {chartClosePrices.length > 0 && (
           <View style={styles.chartContainer}>
@@ -22,7 +21,7 @@ const StockCard = ({ name, ticker, price, change, chartData, iconUrl }) => {
               data={{
                 datasets: [{ data: chartClosePrices }],
               }}
-              width={60} // Chart width to match the small chart in the example
+              width={60} // Chart width for compact display
               height={40} // Adjusted height for compact view
               withDots={false}
               withVerticalLabels={false}
@@ -43,10 +42,14 @@ const StockCard = ({ name, ticker, price, change, chartData, iconUrl }) => {
       <View style={styles.rightSection}>
         {/* Price */}
         <Text style={styles.priceText}>${price}</Text>
+
         {/* Change */}
         <Text style={[styles.changeText, { color: change > 0 ? '#00FF00' : '#FF0000' }]}>
           {change > 0 ? '+' : ''}{change}%
         </Text>
+
+        {/* Chart */}
+       
       </View>
     </View>
   );
@@ -80,23 +83,21 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   rightSection: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'flex-end',
+    flex: 1,
   },
   priceText: {
     color: 'white',
     fontSize: 16,
     fontWeight: 'bold',
-    marginRight: 8, // Space between price and chart
-  },
-  chartContainer: {
-    width: 60, // Ensures the chart stays centered
-    alignItems: 'center', 
-    right:'100%'
+    marginBottom: 4,
   },
   changeText: {
     fontSize: 14,
-    marginLeft: 8, // Space between chart and change percentage
+  },
+  chartContainer: {
+    marginTop: 8,
+    width: 60, // Ensures the chart stays centered
   },
 });
 

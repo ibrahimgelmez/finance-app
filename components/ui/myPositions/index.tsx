@@ -22,7 +22,7 @@ const MyPositions = () => {
     try {
       const response = await fetch('http://154.53.166.2:5024/api/Stock', {
         headers: {
-          Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiIzIiwidW5pcXVlX25hbWUiOiJzYWZhayIsIm5iZiI6MTczMDk4MzY1OCwiZXhwIjoxNzMzNTc1NjU4LCJpYXQiOjE3MzA5ODM2NTh9.cI3kBx-JXWbnBJjNFQCW7EEj_yKdFNCVNWy9SUlaFFk`,
+          Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiIyIiwidW5pcXVlX25hbWUiOiJzYWZhayIsIm5iZiI6MTczMTI2NTQ5NSwiZXhwIjoxNzMzODU3NDk1LCJpYXQiOjE3MzEyNjU0OTV9.ZZLP0COxvpy3pDRvN_eQwXWGT6eaOuHaRYtECNmm7cE`,
         },
       });
 
