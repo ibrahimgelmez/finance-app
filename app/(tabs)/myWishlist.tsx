@@ -72,11 +72,11 @@ const MyWishlist = () => {
       <ScrollView horizontal contentContainerStyle={styles.container}>
         {wishlistData.map((stock) => {
           const realTimeStock = stockData.find((item) => item.symbol === stock.symbol);
-          const marketName = realTimeStock ? realTimeStock.name : 'nan';
+          const marketName = realTimeStock ? realTimeStock.name : stock.symbol;
           const marketCurrentPrice = realTimeStock ? realTimeStock.currentPrice : stock.purchasePrice;
           const marketChange = realTimeStock ? realTimeStock.priceChangePercent.toFixed(2) : 0;
           const chartDataForStock = chartData[stock.symbol] || []; // Ensure it's an empty array if undefined
-
+          
           return (
             <BigStockCard
               key={stock?.id}

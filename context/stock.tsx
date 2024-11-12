@@ -62,11 +62,13 @@ const fetchReelData = async (symbol) => {
 
     if (data && Array.isArray(data)) {
       const reelData = data[0]; // Assuming the API returns an array with one item for the symbol
-
+    // Assuming the API returns an array with one item for the symbol
+      console.log(reelData.displayName);
       // Format data for consistency
       const formattedStockData = {
         symbol: reelData.symbol,
         name: reelData.shortName,
+        longName: reelData.longName,
         currentPrice: reelData.regularMarketPrice,
         priceChangePercent: reelData.regularMarketChangePercent,
         marketTime: reelData.regularMarketTime,
