@@ -33,9 +33,9 @@ const StockCard = ({ name, ticker, price, change, chartData, iconUrl }) => {
             withInnerLines={false}
             withOuterLines={false}
             chartConfig={{
-              backgroundColor: '#1E1E1E',
-              backgroundGradientFrom: '#1E1E1E',
-              backgroundGradientTo: '#1E1E1E',
+              backgroundColor: '#191a1f',
+              backgroundGradientFrom: '#191a1f',
+              backgroundGradientTo: '#191a1f',
               
               color: (opacity = 1) => `rgba(0, 255, 0, ${opacity})`,
             }}
