@@ -4,6 +4,7 @@ import StockChart from '../../components/ui/graphics/stockChart'; // Ensure corr
 import Header from '@/components/ui/header';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import StockCard from '@/components/ui/StockCard';
+import BigStockCard from '@/components/bigStockCard';
 import MyStocks from './myStock';
 import MyWishlist from './myWishlist';
 const screenWidth = Dimensions.get('window').width;
@@ -38,7 +39,7 @@ const Index = () => {
       {/* Stock Indices */}
       <ScrollView horizontal style={{ marginBottom: 24 , padding:6,paddingHorizontal:10  }}>
         {['DOW', 'S&P 500', 'NASDAQ'].map((index, idx) => (
-          <StockChart  key={idx} title={index} data={lineData} height={getHeight(6)} width={120} backgroundColor="#1e222a" />
+          <BigStockCard  key={idx} title={index} data={lineData} height={getHeight(6)} width={120} backgroundColor="#1e222a" />
           ))}
       </ScrollView>
 

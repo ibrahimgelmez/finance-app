@@ -33,9 +33,10 @@ const StockCard = ({ name, ticker, price, change, chartData, iconUrl }) => {
             withInnerLines={false}
             withOuterLines={false}
             chartConfig={{
-              backgroundColor: '#000',
-              backgroundGradientFrom: '#000',
-              backgroundGradientTo: '#000',
+              backgroundColor: '#1E1E1E',
+              backgroundGradientFrom: '#1E1E1E',
+              backgroundGradientTo: '#1E1E1E',
+              
               color: (opacity = 1) => `rgba(0, 255, 0, ${opacity})`,
             }}
             style={{ paddingRight: 0 }}
@@ -61,7 +62,7 @@ const styles = StyleSheet.create({
   cardContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#1E1E1E',
+    backgroundColor: '#191a1f',
     padding: 16,
     borderRadius: 10,
     marginBottom: 12,

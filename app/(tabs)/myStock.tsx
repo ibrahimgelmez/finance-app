@@ -77,7 +77,7 @@ const MyStocks = () => {
   }
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: '#121212' }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: '#191a1f' }}>
       <View style={styles.header}>
         <Text style={styles.headerTitle}>My Stocks</Text>
         <Text style={styles.companyCount}>{mystockData.length} Companies</Text>
@@ -121,7 +121,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     borderBottomWidth: 1,
     borderBottomColor: '#1f1f1f',
-    backgroundColor: '#121212',
+    backgroundColor: '#191a1f',
   },
   headerTitle: {
     color: 'white',
