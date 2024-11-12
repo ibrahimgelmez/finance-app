@@ -7,6 +7,7 @@ import StockCard from '@/components/ui/StockCard';
 import BigStockCard from '@/components/bigStockCard';
 import MyStocks from './myStock';
 import MyWishlist from './myWishlist';
+import FirstCard from '@/components/firstCard';
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
 
@@ -36,12 +37,7 @@ const Index = () => {
      </View>
       </View>
 
-      {/* Stock Indices */}
-      <ScrollView horizontal style={{ marginBottom: 24 , padding:6,paddingHorizontal:10  }}>
-        {['DOW', 'S&P 500', 'NASDAQ'].map((index, idx) => (
-          <BigStockCard  key={idx} title={index} data={lineData} height={getHeight(6)} width={120} backgroundColor="#1e222a" />
-          ))}
-      </ScrollView>
+    <FirstCard />
 
       {/* Wishlist Section */}
         <View style={{ marginBottom: 24,paddingHorizontal:10   }}>
