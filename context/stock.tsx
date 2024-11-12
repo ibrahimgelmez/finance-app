@@ -27,10 +27,10 @@ const fetchStocksData = async (symbols) => {
         symbol: stock.symbol,
         name: stock.shortName,
         currentPrice: stock.regularMarketPrice,
-        priceChangePercent: stock.regularMarketChangePercent,
+        priceChangePercent: stock.regularMarketChangePercent,   // Percent change
         marketTime: stock.regularMarketTime,
         preMarketPrice: stock.preMarketPrice,       // Pre-market price
-        preMarketChange: stock.preMarketChange,     // Pre-market change
+        preMarketChange: stock.preMarketChange ? stock.preMarketChange : stock.symbol,    // Pre-market change
         preMarketChangePercent: stock.preMarketChangePercent, // Pre-market percent change
         regularMarketDayHigh: stock.regularMarketDayHigh, // Daily high
         regularMarketDayLow: stock.regularMarketDayLow,   // Daily low
@@ -72,7 +72,7 @@ const fetchReelData = async (symbol) => {
         currentPrice: reelData.regularMarketPrice,
         priceChangePercent: reelData.regularMarketChangePercent,
         marketTime: reelData.regularMarketTime,
-        preMarketPrice: reelData.preMarketPrice,
+        preMarketPrice: reelData.preMarketPrice || reelData,
         preMarketChange: reelData.preMarketChange,
         preMarketChangePercent: reelData.preMarketChangePercent,
         regularMarketDayHigh: reelData.regularMarketDayHigh,

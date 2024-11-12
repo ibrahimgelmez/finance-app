@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, ScrollView, SafeAreaView, ActivityIndicator, StyleSheet } from 'react-native';
 import { useStock } from '@/context/stock';
 import BigStockCard from '@/components/bigStockCard';
+import StockCard from '@/components/ui/StockCard';
 
 const MyWishlist = () => {
   const [wishlistData, setWishlistData] = useState([]);
@@ -68,17 +69,20 @@ const MyWishlist = () => {
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#191a1f' }}>
      
-
-      <ScrollView horizontal contentContainerStyle={styles.container}>
+     <View style={styles.header}>
+        <Text style={styles.headerTitle}>My Wishlist</Text>
+        <Text style={styles.companyCount}>{wishlistData.length} companies</Text>
+      </View>
+      <ScrollView  contentContainerStyle={styles.container}>
         {wishlistData.map((stock) => {
           const realTimeStock = stockData.find((item) => item.symbol === stock.symbol);
           const marketName = realTimeStock ? realTimeStock.name : stock.symbol;
-          const marketCurrentPrice = realTimeStock ? realTimeStock.currentPrice : stock.purchasePrice;
-          const marketChange = realTimeStock ? realTimeStock.priceChangePercent.toFixed(2) : 0;
+          const marketCurrentPrice = realTimeStock ? realTimeStock.currentPrice : realTimeStock.preMarketPrice;
+          const marketChange = realTimeStock ? realTimeStock.priceChangePercent.toFixed(2) : realTimeStock.regularMarketChange; 
           const chartDataForStock = chartData[stock.symbol] || []; // Ensure it's an empty array if undefined
           
           return (
-            <BigStockCard
+            <StockCard
               key={stock?.id}
               name={marketName}
               title={marketName}
@@ -105,7 +109,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     borderBottomWidth: 1,
     borderBottomColor: '#1f1f1f',
-    backgroundColor: '#121212',
+    
   },
   headerTitle: {
     color: 'white',

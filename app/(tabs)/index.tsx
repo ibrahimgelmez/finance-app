@@ -6,7 +6,7 @@ import FontAwesome from '@expo/vector-icons/FontAwesome';
 import StockCard from '@/components/ui/StockCard';
 import BigStockCard from '@/components/bigStockCard';
 import MyStocks from './myStock';
-import MyWishlist from './myWishlist';
+import MyWishlist from '@/components/myWishlistCard/myWishlist';
 import FirstCard from '@/components/firstCard';
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
