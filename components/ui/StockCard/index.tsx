@@ -5,7 +5,7 @@ import { LineChart } from 'react-native-chart-kit';
 const StockCard = ({ name, ticker, price, change, chartData, iconUrl }) => {
   // chartData'daki geçerli sayıları almak için filtreleme işlemi
   const chartClosePrices = chartData
-    ? chartData.map((data) => data.close).filter((value) => !isNaN(value)) // NaN değerleri filtrele
+    ? chartData?.map((data) => data.close).filter((value) => !isNaN(value)) // NaN değerleri filtrele
     : []; // Eğer chartData yoksa boş dizi döndür
 
   return (

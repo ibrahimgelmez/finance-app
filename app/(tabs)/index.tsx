@@ -5,7 +5,7 @@ import Header from '@/components/ui/header';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import StockCard from '@/components/ui/StockCard';
 import MyStocks from './myStock';
-
+import MyWishlist from './myWishlist';
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
 
@@ -48,11 +48,7 @@ const Index = () => {
         <Text style={{ fontSize: 18, color: '#FFFFFF', marginBottom: 8 }}>My Wishlist</Text>
         <FontAwesome name="arrow-right" size={20} color="green" />
         </View>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-          {['TWTR', 'AAPL', 'TSLA'].map((stock, idx) => (
-            <StockChart key={idx} title={stock} data={lineData} height={getHeight(6)} width={170} backgroundColor="#1e222a" />
-            ))}
-        </ScrollView>
+        <MyWishlist />
       </View>
 
    <MyStocks />

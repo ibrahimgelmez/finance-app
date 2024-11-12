@@ -10,7 +10,7 @@ export default function Root() {
   return (
     <AuthProvider>
       <StockProvider>
-        <Slot />
+        <Index />
       </StockProvider>
     </AuthProvider>
   );
