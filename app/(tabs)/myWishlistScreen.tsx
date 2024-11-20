@@ -1,21 +1,48 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, ScrollView, SafeAreaView, ActivityIndicator, StyleSheet } from 'react-native';
-import { useStock } from '@/context/stock';
-import BigStockCard from '@/components/bigStockCard';
 import StockCard from '@/components/ui/StockCard';
+
+const fetchStockPrice = async (symbol) => {
+  const options = {
+    method: 'GET',
+    url: `https://yahoo-finance166.p.rapidapi.com/api/stock/get-price`,
+    params: { region: 'US', symbol },
+    headers: {
+      'x-rapidapi-key': 'cd04661eb6msh8638f17e507e7bbp1183c5jsn31d7703d6851',
+      'x-rapidapi-host': 'yahoo-finance166.p.rapidapi.com',
+    },
+  };
+
+  try {
+    const response = await fetch(`${options.url}?region=${options.params.region}&symbol=${symbol}`, {
+      method: 'GET',
+      headers: options.headers,
+    });
+
+    const data = await response.json();
+
+    console.log(`Response for ${symbol}:`, JSON.stringify(data, null, 2)); // Log yanıt
+
+    const priceData = data?.quoteSummary?.result?.[0]?.price || {};
+
+    return {
+      symbol,
+      name: priceData.shortName || priceData.longName || symbol, // Hisse adı
+      price: priceData.regularMarketPrice?.raw || null, // Hisse fiyatı
+      change: priceData.regularMarketChange?.raw || null, // Değişim oranı
+      high: priceData.regularMarketDayHigh?.raw || null, // Günlük en yüksek fiyat
+      low: priceData.regularMarketDayLow?.raw || null, // Günlük en düşük fiyat
+    };
+  } catch (error) {
+    console.error(`Error fetching price for ${symbol}:`, error);
+    return { symbol, name: symbol, price: null, change: null, high: null, low: null };
+  }
+};
 
 const MyWishlist = () => {
   const [wishlistData, setWishlistData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
-  const { chartData, fetchChartData, stockData, fetchReelData } = useStock();
-  
-  const formatDate = (date) => date.toISOString().split('T')[0];
-
-  const today = new Date();
-  const yesterday = new Date(today);
-  yesterday.setDate(today.getDate() - 1);
 
   const fetchWishlistData = async () => {
     try {
@@ -30,17 +57,20 @@ const MyWishlist = () => {
       }
 
       const data = await response.json();
-      data.forEach(async (stock) => {
-        await fetchReelData(stock.symbol);
-      });
 
-      setWishlistData(data);
+      console.log('Fetched wishlist:', data.map(stock => stock.symbol)); // Log semboller
 
-      data.forEach((stock) => {
-        fetchChartData(stock.symbol, formatDate(yesterday), formatDate(today), "1h");
-      });
+      const enrichedData = await Promise.all(
+        data.map(async (stock) => {
+          const priceInfo = await fetchStockPrice(stock.symbol);
+          return { ...stock, ...priceInfo };
+        })
+      );
+
+      setWishlistData(enrichedData);
     } catch (error) {
-      setError("Failed to fetch wishlist data.");
+      setError('Failed to fetch wishlist data.');
+      console.error(error);
     } finally {
       setLoading(false);
     }
@@ -68,34 +98,24 @@ const MyWishlist = () => {
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#191a1f' }}>
-     
-     <View style={styles.header}>
+      <View style={styles.header}>
         <Text style={styles.headerTitle}>My Wishlist</Text>
-        <Text style={styles.companyCount}>{wishlistData.length} companies</Text>
+        <Text style={styles.companyCount}>{wishlistData.length} Companies</Text>
       </View>
-      <ScrollView  contentContainerStyle={styles.container}>
-        {wishlistData.map((stock) => {
-          const realTimeStock = stockData.find((item) => item.symbol === stock.symbol);
-          const marketName = realTimeStock ? realTimeStock.name : stock.symbol;
-          const marketCurrentPrice = realTimeStock ? realTimeStock.currentPrice : realTimeStock.preMarketPrice;
-          const marketChange = realTimeStock ? realTimeStock.priceChangePercent.toFixed(2) : realTimeStock.regularMarketChange; 
-          const chartDataForStock = chartData[stock.symbol] || []; // Ensure it's an empty array if undefined
-          
-          return (
-            <StockCard
-              key={stock?.id}
-              name={marketName}
-              title={marketName}
-              ticker={stock?.symbol}
-              price={marketCurrentPrice} 
-              change={marketChange}
-              chartData={chartDataForStock} // Ensure chart data exists
-              iconUrl={`https://img.logo.dev/ticker/${stock.symbol}?token=pk_L243nCyGQ6KNbSvmAhSl0A`}
-              width={60}
-              height={200}
-            />
-          );
-        })}
+
+      <ScrollView contentContainerStyle={styles.container}>
+        {wishlistData.map((stock) => (
+          <StockCard
+            key={stock.symbol}
+            name={stock.name} // Hisse adı
+            ticker={stock.symbol} // Hisse sembolü
+            price={stock.price !== null ? stock.price.toFixed(2) : 'N/A'} // Fiyat bilgisi
+            change={stock.change !== null ? stock.change.toFixed(2) : 'N/A'} // Değişim oranı
+            high={stock.high !== null ? stock.high.toFixed(2) : 'N/A'} // Günlük en yüksek fiyat
+            low={stock.low !== null ? stock.low.toFixed(2) : 'N/A'} // Günlük en düşük fiyat
+            iconUrl={`https://img.logo.dev/ticker/${stock.symbol}?token=pk_L243nCyGQ6KNbSvmAhSl0A`}
+          />
+        ))}
       </ScrollView>
     </SafeAreaView>
   );
@@ -109,7 +129,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     borderBottomWidth: 1,
     borderBottomColor: '#1f1f1f',
-    
+    backgroundColor: '#191a1f',
   },
   headerTitle: {
     color: 'white',

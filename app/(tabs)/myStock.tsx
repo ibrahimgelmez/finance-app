@@ -1,26 +1,76 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, ScrollView, SafeAreaView, ActivityIndicator, StyleSheet } from 'react-native';
 import StockCard from '@/components/ui/StockCard';
-import { useStock } from '@/context/stock';
+
+const fetchStockPrice = async (symbol) => {
+  const options = {
+    method: 'GET',
+    url: `https://yahoo-finance166.p.rapidapi.com/api/stock/get-price`,
+    params: { region: 'US', symbol },
+    headers: {
+      'x-rapidapi-key': '41808140b4msh35d1e318cffadccp120545jsn90fd91e9c0b1',
+      'x-rapidapi-host': 'yahoo-finance166.p.rapidapi.com',
+    },
+  };
+
+  try {
+    const response = await fetch(`${options.url}?region=${options.params.region}&symbol=${symbol}`, {
+      method: 'GET',
+      headers: options.headers,
+    });
+
+    const data = await response.json();
+
+    console.log(`Response for ${symbol}:`, JSON.stringify(data, null, 2));
+
+    const priceData = data?.quoteSummary?.result?.[0]?.price || {};
+
+    return {
+      symbol,
+      name: priceData.shortName || priceData.longName || symbol,
+      price: priceData.regularMarketPrice?.raw || null,
+      change: priceData.regularMarketChange?.raw || null,
+      high: priceData.regularMarketDayHigh?.raw || null,
+      low: priceData.regularMarketDayLow?.raw || null,
+    };
+  } catch (error) {
+    console.error(`Error fetching price for ${symbol}:`, error);
+    return { symbol, name: symbol, price: null, change: null, high: null, low: null };
+  }
+};
+
+const fetchStockChartData = async (symbol) => {
+  const options = {
+    method: 'GET',
+    url: `https://yahoo-finance166.p.rapidapi.com/api/stock/get-chart`,
+    params: { region: 'US', symbol, interval: '1d', range: '1mo' },
+    headers: {
+      'x-rapidapi-key': '41808140b4msh35d1e318cffadccp120545jsn90fd91e9c0b1',
+      'x-rapidapi-host': 'yahoo-finance166.p.rapidapi.com',
+    },
+  };
+
+  try {
+    const response = await fetch(`${options.url}?region=${options.params.region}&symbol=${symbol}&interval=${options.params.interval}&range=${options.params.range}`, {
+      method: 'GET',
+      headers: options.headers,
+    });
+
+    const data = await response.json();
+    const chartData = data?.chart?.result?.[0]?.indicators?.quote?.[0]?.close || [];
+    return chartData;
+  } catch (error) {
+    console.error(`Error fetching chart data for ${symbol}:`, error);
+    return [];
+  }
+};
 
 const MyStocks = () => {
-  const [mystockData, setmyStockData] = useState([]);
+  const [mystockData, setMyStockData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const { chartData, fetchChartData, stockData, fetchReelData } = useStock();
-  
-  // Helper function to format dates as YYYY-MM-DD
-  const formatDate = (date) => date.toISOString().split('T')[0];
-
-  // Calculate today's and yesterday's dates
-  const today = new Date();
-  const yesterday = new Date(today);
-  yesterday.setDate(today.getDate() - 1);
-
-  // Fetch stock data from the API
-  const fetchStockData = async () => {
-    console.log("Starting fetchStockData");
+  const fetchStockList = async () => {
     try {
       const response = await fetch('http://154.53.166.2:5024/api/Stock', {
         headers: {
@@ -28,36 +78,35 @@ const MyStocks = () => {
         },
       });
 
-      console.log("Response received:", response);
-
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      const data = await response.json();
-      console.log("Fetched stock data:", data);
+      const stockList = await response.json();
 
-      // Fetch the real-time data for each stock using fetchReelData
-      data.forEach(async (stock) => {
-        await fetchReelData(stock.symbol); // This will update the stockData state with real-time prices
-      });
+      console.log('Fetched stock list:', stockList.map(stock => stock.symbol));
 
-      setmyStockData(data);
+      const enrichedData = await Promise.all(
+        stockList.map(async (stock) => {
+          const [priceInfo, chartData] = await Promise.all([
+            fetchStockPrice(stock.symbol),
+            fetchStockChartData(stock.symbol),
+          ]);
+          return { ...stock, ...priceInfo, chartData };
+        })
+      );
 
-      // Fetch chart data for each stock with today's and yesterday's dates
-      data.forEach((stock) => {
-        fetchChartData(stock.symbol, formatDate(yesterday), formatDate(today), "1h");
-      });
-    } catch (error) {
-      setError("Failed to fetch stock data.");
-      console.error("Error fetching stock data:", error);
+      setMyStockData(enrichedData);
+    } catch (err) {
+      setError('Failed to fetch stock data.');
+      console.error(err);
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchStockData();
+    fetchStockList();
   }, []);
 
   if (loading) {
@@ -84,30 +133,17 @@ const MyStocks = () => {
       </View>
 
       <ScrollView contentContainerStyle={styles.container}>
-        {mystockData.map((stock) => {
-          // Find the real-time stock data from stockData based on the symbol
-          const realTimeStock = stockData.find((item) => item.symbol === stock.symbol);
-          const marketName = realTimeStock ? realTimeStock?.name : 'nan';
-          const marketCurrentPrice = realTimeStock ? realTimeStock.currentPrice : stock.purchasePrice;
-          const marketChange = realTimeStock ? realTimeStock.priceChangePercent.toFixed(2) : 0;
-          return (
-            <StockCard
-              key={stock?.id}
-              name={marketName}
-              ticker={stock?.symbol}
-              price={marketCurrentPrice} // Send the fetched market price here
-              change={marketChange}
-              chartData={chartData[stock.symbol]} // Access symbol-specific chart data
-              iconUrl={`https://img.logo.dev/ticker/${stock.symbol}?token=pk_L243nCyGQ6KNbSvmAhSl0A`}
-              width={60}
-              height={200}
-            />
-          );
-        })}
-
-        {/* Render the raw data for debugging */}
-        <Text style={{ color: 'white', marginTop: 20 }}>Fetched Data:</Text>
-        <Text style={{ color: 'white', padding: 10 }}>{JSON.stringify(mystockData, null, 2)}</Text>
+        {mystockData.map((stock) => (
+          <StockCard
+            key={stock.symbol}
+            name={stock.name}
+            ticker={stock.symbol}
+            price={stock.price !== null ? stock.price.toFixed(2) : 'N/A'}
+            change={stock.change !== null ? stock.change.toFixed(2) : 'N/A'}
+            chartData={stock.chartData}
+            iconUrl={`https://img.logo.dev/ticker/${stock.symbol}?token=pk_L243nCyGQ6KNbSvmAhSl0A`}
+          />
+        ))}
       </ScrollView>
     </SafeAreaView>
   );
