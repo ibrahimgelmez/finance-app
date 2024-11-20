@@ -87,7 +87,7 @@ const MyStocks = () => {
         {mystockData.map((stock) => {
           // Find the real-time stock data from stockData based on the symbol
           const realTimeStock = stockData.find((item) => item.symbol === stock.symbol);
-          const marketName = realTimeStock ? realTimeStock.name : 'nan';
+          const marketName = realTimeStock ? realTimeStock?.name : 'nan';
           const marketCurrentPrice = realTimeStock ? realTimeStock.currentPrice : stock.purchasePrice;
           const marketChange = realTimeStock ? realTimeStock.priceChangePercent.toFixed(2) : 0;
           return (

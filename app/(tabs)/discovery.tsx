@@ -1,60 +1,94 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, ScrollView, SafeAreaView, ActivityIndicator, TextInput } from 'react-native';
-import axios from 'axios'; // Axios ile API çağrısı yapıyoruz
+import { View, Text, ScrollView, SafeAreaView, ActivityIndicator, TextInput, Image, TouchableOpacity, Linking } from 'react-native';
+import axios from 'axios';
 import Header from '@/components/ui/header';
 import StockCard from '@/components/ui/StockCard';
 
+const fetchStockPrice = async (symbol) => {
+  const options = {
+    method: 'GET',
+    url: 'https://yahoo-finance166.p.rapidapi.com/api/stock/get-price',
+    params: {
+      region: 'US',
+      symbol,
+    },
+    headers: {
+      'x-rapidapi-key': 'cd04661eb6msh8638f17e507e7bbp1183c5jsn31d7703d6851',
+      'x-rapidapi-host': 'yahoo-finance166.p.rapidapi.com',
+    },
+  };
+
+  try {
+    const response = await axios.request(options);
+    const priceData = response.data?.quoteSummary?.result?.[0]?.price || {};
+    return {
+      price: priceData.regularMarketPrice?.raw || null,
+      change: priceData.regularMarketChange?.raw || null,
+      high: priceData.regularMarketDayHigh?.raw || null,
+      low: priceData.regularMarketDayLow?.raw || null,
+    };
+  } catch (error) {
+    console.error(`Error fetching price for ${symbol}:`, error);
+    return { price: null, change: null, high: null, low: null };
+  }
+};
+
 const Discovery = () => {
-  const [searchTerm, setSearchTerm] = useState(''); // Kullanıcı arama terimi
-  const [stockData, setStockData] = useState([]);  // Gelen hisse verileri
-  const [loading, setLoading] = useState(false);   // Yükleme durumu
-  const [error, setError] = useState(null);        // Hata durumunu göstermek için
+  const [searchTerm, setSearchTerm] = useState('');
+  const [stockData, setStockData] = useState([]);
+  const [newsData, setNewsData] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
-  // Popüler hisseler
-  const popularStocks = ['AAPL', 'GOOG', 'MSFT', 'AMZN', 'TSLA'];
+  const rapidApiOptions = {
+    headers: {
+      'x-rapidapi-key': 'cd04661eb6msh8638f17e507e7bbp1183c5jsn31d7703d6851',
+      'x-rapidapi-host': 'yahoo-finance166.p.rapidapi.com',
+    },
+  };
 
-  // Kullanıcının arama terimi değiştiğinde veya liste boş olduğunda API çağrısı yapılır
   useEffect(() => {
-    const fetchStockData = async () => {
+    const fetchData = async () => {
       setLoading(true);
-      setError(null); // Hata durumunu sıfırla
+      setError(null);
 
       try {
-        let response;
+        // Autocomplete API'den verileri al
+        const response = await axios.get(
+          'https://yahoo-finance166.p.rapidapi.com/api/autocomplete',
+          {
+            params: { query: searchTerm || 'AAPL' },
+            ...rapidApiOptions,
+          }
+        );
 
-        if (searchTerm.trim() === '') {
-          // Eğer arama terimi boşsa popüler hisseleri getir
-          response = await axios.get('http://154.53.166.2:5000/api/stocks-by-symbol', {
-            params: { symbols: popularStocks.join(',') }, // Popüler hisseler
-          });
-        } else {
-          // Arama terimi varsa normal arama yap
-          response = await axios.get('http://154.53.166.2:5000/api/search-stocks', {
-            params: { term: searchTerm }, // API'ye arama terimi parametre olarak gönderilir
-          });
-        }
+    // Sadece hisseleri (quoteType === 'EQUITY') filtrele
+    const quotes = (response.data.quotes || []).filter((quote) => quote.quoteType === 'EQUITY');
 
-        setStockData(response.data); // API'den gelen verileri state'e kaydet
+    setStockData(quotes); // Filtrelenmiş hisseleri state'e kaydet
+    setNewsData(response.data.news || []);
+
+        // Her bir sembol için fiyat bilgisi al
+        const priceDataPromises = quotes.map(async (quote) => {
+          const priceData = await fetchStockPrice(quote.symbol);
+          return { ...quote, ...priceData };
+        });
+
+        const mergedData = await Promise.all(priceDataPromises);
+        setStockData(mergedData);
       } catch (err) {
-        console.error('Error fetching stock data:', err);
-        setError('Error fetching stock data.'); // Hata durumunda mesaj göster
+        console.error('Error fetching data:', err);
+        setError('Error fetching data.');
       } finally {
-        setLoading(false); // Yükleme durumunu sıfırla
+        setLoading(false);
       }
     };
 
-    fetchStockData();
-  }, [searchTerm]); // Arama terimi değiştiğinde tetiklenir
+    fetchData();
+  }, [searchTerm]);
 
   const handleSearchChange = (text) => {
-    setSearchTerm(text); // Kullanıcının girdiği arama terimini state'e kaydet
-  };
-
-  const safeToFixed = (value, decimalPlaces = 2) => {
-    if (value === null || value === undefined || isNaN(value)) {
-      return '0.00';
-    }
-    return parseFloat(value).toFixed(decimalPlaces);
+    setSearchTerm(text);
   };
 
   return (
@@ -68,7 +102,7 @@ const Discovery = () => {
           </View>
         </View>
 
-        {/* Arama Girdisi */}
+        {/* Search Input */}
         <View style={{ paddingHorizontal: 10, marginBottom: 16 }}>
           <TextInput
             style={{
@@ -83,38 +117,57 @@ const Discovery = () => {
             placeholder="Search for a stock (e.g., Apple)"
             placeholderTextColor="#888"
             value={searchTerm}
-            onChangeText={handleSearchChange} // Arama terimi değiştiğinde güncellenir
+            onChangeText={handleSearchChange}
           />
         </View>
 
-        {/* Hisse Sonuçları */}
+        {/* Stock Results */}
         <View style={{ marginBottom: 24, paddingHorizontal: 10 }}>
-          <View style={{ flexDirection: 'row', alignItems: 'baseline', justifyContent: 'space-between' }}>
-            <Text style={{ fontSize: 18, color: '#FFFFFF', marginBottom: 8 }}>Search Results</Text>
-          </View>
-
+          <Text style={{ fontSize: 18, color: '#FFFFFF', marginBottom: 8 }}>Stock Results</Text>
           {loading ? (
-            <ActivityIndicator size="large" color="#FFFFFF" /> // Yükleme ikonu
+            <ActivityIndicator size="large" color="#FFFFFF" />
           ) : error ? (
-            <Text style={{ color: 'red' }}>{error}</Text> // Hata mesajı
+            <Text style={{ color: 'red' }}>{error}</Text>
           ) : stockData.length > 0 ? (
             stockData.map((stock, index) => (
               <StockCard
                 key={index}
-                name={stock?.shortName || stock?.longName}
+                name={stock?.shortname || stock?.longname || stock?.symbol} // Stock name
                 ticker={stock?.symbol}
-                price={safeToFixed(stock?.regularMarketPrice)}
-                change={safeToFixed(stock?.regularMarketChange)}
-                chartData={[
-                  { value: stock?.regularMarketDayLow },
-                  { value: stock?.regularMarketPrice },
-                  { value: stock?.regularMarketDayHigh },
-                ]}
+                price={stock?.price !== null ? stock?.price.toFixed(2) : 'N/A'}
+                change={stock?.change !== null ? stock?.change.toFixed(2) : 'N/A'}
+                high={stock?.high !== null ? stock?.high.toFixed(2) : 'N/A'}
+                low={stock?.low !== null ? stock?.low.toFixed(2) : 'N/A'}
                 iconUrl={`https://img.logo.dev/ticker/${stock?.symbol}?token=pk_L243nCyGQ6KNbSvmAhSl0A`}
               />
             ))
           ) : (
-            <Text style={{ color: 'white' }}>No stocks found for "{searchTerm}"</Text> // Sonuç bulunamazsa mesaj
+            <Text style={{ color: 'white' }}>No stocks found for "{searchTerm}"</Text>
+          )}
+        </View>
+
+        {/* News Results */}
+        <View style={{ marginBottom: 24, paddingHorizontal: 10 }}>
+          <Text style={{ fontSize: 18, color: '#FFFFFF', marginBottom: 8 }}>News</Text>
+          {newsData.length > 0 ? (
+            newsData.map((news, index) => (
+              <TouchableOpacity
+                key={index}
+                onPress={() => {
+                  Linking.openURL(news.link);
+                }}
+                style={{ marginBottom: 16 }}
+              >
+                <Image
+                  source={{ uri: news.thumbnail?.resolutions[0]?.url }}
+                  style={{ width: '100%', height: 150, borderRadius: 8 }}
+                />
+                <Text style={{ fontSize: 16, color: '#FFFFFF', marginTop: 8 }}>{news.title}</Text>
+                <Text style={{ color: '#888' }}>{news.publisher}</Text>
+              </TouchableOpacity>
+            ))
+          ) : (
+            <Text style={{ color: 'white' }}>No news available.</Text>
           )}
         </View>
       </ScrollView>

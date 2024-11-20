@@ -118,6 +118,7 @@ const styles = StyleSheet.create({
   },
   container: {
     padding: 16,
+    backgroundColor:"#191a1f"
   },
 });
 
