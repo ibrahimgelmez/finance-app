@@ -2,7 +2,7 @@ import { Slot } from 'expo-router';
 import { AuthProvider } from '@/context/auth';
 import Index from './(tabs)';
 import { StockProvider } from '@/context/stock';
-import Discovery from './(tabs)/discovery';
+import Discovery from './(tabs)/search';
 import MyStocks from './(tabs)/myStock';
 
 export default function Root() {

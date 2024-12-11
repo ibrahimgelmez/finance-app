@@ -8,7 +8,7 @@ const fetchStockPrice = async (symbol) => {
     url: `https://yahoo-finance166.p.rapidapi.com/api/stock/get-price`,
     params: { region: 'US', symbol },
     headers: {
-      'x-rapidapi-key': 'cd04661eb6msh8638f17e507e7bbp1183c5jsn31d7703d6851',
+      'x-rapidapi-key': 'fb4d2eb4d3msh79aa725ac9fba7bp1ea1ecjsn0973925282e4',
       'x-rapidapi-host': 'yahoo-finance166.p.rapidapi.com',
     },
   };
@@ -48,7 +48,7 @@ const MyWishlist = () => {
     try {
       const response = await fetch('http://154.53.166.2:5024/api/Wishlist', {
         headers: {
-          'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiIyIiwidW5pcXVlX25hbWUiOiJzYWZhayIsIm5iZiI6MTczMTI2NTQ5NSwiZXhwIjoxNzMzODU3NDk1LCJpYXQiOjE3MzEyNjU0OTV9.ZZLP0COxvpy3pDRvN_eQwXWGT6eaOuHaRYtECNmm7cE`,
+          'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiIxIiwidW5pcXVlX25hbWUiOiJvbWVyaHVybWEiLCJuYmYiOjE3MzIxODUzMTAsImV4cCI6MTczNDc3NzMxMCwiaWF0IjoxNzMyMTg1MzEwfQ._PzHrRSTGOyMlCaGz3Z-fONl1iAWPlbanqUt7II_PbI`,
         },
       });
 

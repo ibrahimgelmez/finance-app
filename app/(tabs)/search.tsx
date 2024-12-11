@@ -1,8 +1,16 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { View, Text, ScrollView, SafeAreaView, ActivityIndicator, TextInput, Image, TouchableOpacity, Linking } from 'react-native';
 import axios from 'axios';
 import Header from '@/components/ui/header';
 import StockCard from '@/components/ui/StockCard';
+
+const debounce = (func, delay) => {
+  let timeout;
+  return (...args) => {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => func(...args), delay);
+  };
+};
 
 const fetchStockPrice = async (symbol) => {
   const options = {
@@ -13,7 +21,7 @@ const fetchStockPrice = async (symbol) => {
       symbol,
     },
     headers: {
-      'x-rapidapi-key': 'cd04661eb6msh8638f17e507e7bbp1183c5jsn31d7703d6851',
+      'x-rapidapi-key': 'fb4d2eb4d3msh79aa725ac9fba7bp1ea1ecjsn0973925282e4',
       'x-rapidapi-host': 'yahoo-finance166.p.rapidapi.com',
     },
   };
@@ -33,7 +41,7 @@ const fetchStockPrice = async (symbol) => {
   }
 };
 
-const Discovery = () => {
+const Search = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [stockData, setStockData] = useState([]);
   const [newsData, setNewsData] = useState([]);
@@ -42,33 +50,34 @@ const Discovery = () => {
 
   const rapidApiOptions = {
     headers: {
-      'x-rapidapi-key': 'cd04661eb6msh8638f17e507e7bbp1183c5jsn31d7703d6851',
+      'x-rapidapi-key': 'fb4d2eb4d3msh79aa725ac9fba7bp1ea1ecjsn0973925282e4',
       'x-rapidapi-host': 'yahoo-finance166.p.rapidapi.com',
     },
   };
 
-  useEffect(() => {
-    const fetchData = async () => {
+  const fetchData = useCallback(
+    debounce(async (query) => {
+      if (!query) {
+        setStockData([]);
+        setNewsData([]);
+        return;
+      }
+
       setLoading(true);
       setError(null);
 
       try {
-        // Autocomplete API'den verileri al
         const response = await axios.get(
           'https://yahoo-finance166.p.rapidapi.com/api/autocomplete',
           {
-            params: { query: searchTerm || 'AAPL' },
+            params: { query },
             ...rapidApiOptions,
           }
         );
 
-    // Sadece hisseleri (quoteType === 'EQUITY') filtrele
-    const quotes = (response.data.quotes || []).filter((quote) => quote.quoteType === 'EQUITY');
+        const quotes = (response.data.quotes || []).filter((quote) => quote.quoteType === 'EQUITY');
 
-    setStockData(quotes); // Filtrelenmiş hisseleri state'e kaydet
-    setNewsData(response.data.news || []);
-
-        // Her bir sembol için fiyat bilgisi al
+        // Fiyat bilgisi eksik olanlar için sorgu
         const priceDataPromises = quotes.map(async (quote) => {
           const priceData = await fetchStockPrice(quote.symbol);
           return { ...quote, ...priceData };
@@ -76,15 +85,20 @@ const Discovery = () => {
 
         const mergedData = await Promise.all(priceDataPromises);
         setStockData(mergedData);
+
+        setNewsData(response.data.news || []);
       } catch (err) {
         console.error('Error fetching data:', err);
         setError('Error fetching data.');
       } finally {
         setLoading(false);
       }
-    };
+    }, 500),
+    []
+  );
 
-    fetchData();
+  useEffect(() => {
+    fetchData(searchTerm);
   }, [searchTerm]);
 
   const handleSearchChange = (text) => {
@@ -132,12 +146,12 @@ const Discovery = () => {
             stockData.map((stock, index) => (
               <StockCard
                 key={index}
-                name={stock?.shortname || stock?.longname || stock?.symbol} // Stock name
+                name={stock?.shortname || stock?.longname || stock?.symbol}
                 ticker={stock?.symbol}
-                price={stock?.price !== null ? stock?.price.toFixed(2) : 'N/A'}
-                change={stock?.change !== null ? stock?.change.toFixed(2) : 'N/A'}
-                high={stock?.high !== null ? stock?.high.toFixed(2) : 'N/A'}
-                low={stock?.low !== null ? stock?.low.toFixed(2) : 'N/A'}
+                price={stock?.price !== null ? stock?.price?.toFixed(2) : 'N/A'}
+                change={stock?.change !== null ? stock?.change?.toFixed(2) : 'N/A'}
+                high={stock?.high !== null ? stock?.high?.toFixed(2) : 'N/A'}
+                low={stock?.low !== null ? stock?.low?.toFixed(2) : 'N/A'}
                 iconUrl={`https://img.logo.dev/ticker/${stock?.symbol}?token=pk_L243nCyGQ6KNbSvmAhSl0A`}
               />
             ))
@@ -175,4 +189,4 @@ const Discovery = () => {
   );
 };
 
-export default Discovery;
+export default Search;
