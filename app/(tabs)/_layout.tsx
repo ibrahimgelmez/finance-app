@@ -32,13 +32,6 @@ function TabBarScreens() {
           tabBarStyle: { display: 'none' }, // Tab bar'da görünmesini engeller
         }}
       />
-      <Tabs.Screen
-        name="myWishlistScreen"
-        options={{
-          title: 'Wishlist',
-          tabBarStyle: { display: 'none' }, // Tab bar'da görünmesini engeller
-        }}
-      />
     </Tabs>
   );
 }

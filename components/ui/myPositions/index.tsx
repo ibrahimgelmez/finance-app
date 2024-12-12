@@ -11,11 +11,47 @@ import {
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
+import StockCard from '@/components/ui/StockCard';
+import { useStock } from '@/context/stock';
 
 const MyPositions = () => {
   const [stocks, setStocks] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  const { chartData, fetchChartData } = useStock();
   const navigation = useNavigation();
+
+  const fetchStockData = async () => {
+    console.log('Starting fetchStockData'); // Log the start of the function
+    try {
+      const response = await fetch('http://154.53.166.2:5024/api/Stock', {
+        headers: {
+          Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiIzIiwidW5pcXVlX25hbWUiOiJzYWZhayIsIm5iZiI6MTczMDk4MzY1OCwiZXhwIjoxNzMzNTc1NjU4LCJpYXQiOjE3MzA5ODM2NTh9.cI3kBx-JXWbnBJjNFQCW7EEj_yKdFNCVNWy9SUlaFFk`,
+        },
+      });
+
+      console.log('Response received:', response); // Log the raw response object
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      console.log('Fetched stock data:', data); // Log the fetched data
+      setStockData(data);
+
+      // Fetch chart data for each stock after fetching stock data
+      data.forEach((stock) => {
+        fetchChartData(stock.symbol, '2024-10-08', '2024-10-09', '1h');
+      });
+    } catch (error) {
+      setError('Failed to fetch stock data.');
+      console.error('Error fetching stock data:', error); // Log the error
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
     const fetchStocks = async () => {
