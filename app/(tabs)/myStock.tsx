@@ -8,7 +8,7 @@ const fetchStockPrice = async (symbol) => {
     url: `https://yahoo-finance166.p.rapidapi.com/api/stock/get-price`,
     params: { region: 'US', symbol },
     headers: {
-      'x-rapidapi-key': '41808140b4msh35d1e318cffadccp120545jsn90fd91e9c0b1',
+      'x-rapidapi-key': 'fb4d2eb4d3msh79aa725ac9fba7bp1ea1ecjsn0973925282e4',
       'x-rapidapi-host': 'yahoo-finance166.p.rapidapi.com',
     },
   };
@@ -45,7 +45,7 @@ const fetchStockChartData = async (symbol) => {
     url: `https://yahoo-finance166.p.rapidapi.com/api/stock/get-chart`,
     params: { region: 'US', symbol, interval: '1d', range: '1mo' },
     headers: {
-      'x-rapidapi-key': '41808140b4msh35d1e318cffadccp120545jsn90fd91e9c0b1',
+      'x-rapidapi-key': 'fb4d2eb4d3msh79aa725ac9fba7bp1ea1ecjsn0973925282e4',
       'x-rapidapi-host': 'yahoo-finance166.p.rapidapi.com',
     },
   };
@@ -74,7 +74,7 @@ const MyStocks = () => {
     try {
       const response = await fetch('http://154.53.166.2:5024/api/Stock', {
         headers: {
-          'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiIyIiwidW5pcXVlX25hbWUiOiJzYWZhayIsIm5iZiI6MTczMTI2NTQ5NSwiZXhwIjoxNzMzODU3NDk1LCJpYXQiOjE3MzEyNjU0OTV9.ZZLP0COxvpy3pDRvN_eQwXWGT6eaOuHaRYtECNmm7cE`,
+          'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiIyIiwidW5pcXVlX25hbWUiOiJzYWZhayIsIm5iZiI6MTczMzk1MDEyNSwiZXhwIjoxNzM2NjI4NTI1LCJpYXQiOjE3MzM5NTAxMjV9.hjTa7V8ubqvgdpzLK88miptRS_MtPntCnoX14bixnNY`,
         },
       });
 

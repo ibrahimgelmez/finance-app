@@ -4,8 +4,8 @@ import { LineChart } from 'react-native-chart-kit';
 
 const BigStockCard = ({ title, name, ticker, price, change, chartData, iconUrl }) => {
   // Ensure chartData has the required structure, including color
-  const formattedChartData = chartData && chartData.length > 0
-    ? chartData.map((data) => data.close).filter((value) => !isNaN(value)) // Filter out NaN values
+  const formattedChartData = chartData && chartData?.length > 0
+    ? chartData?.map((data) => data.close).filter((value) => !isNaN(value)) // Filter out NaN values
     : []; // If chartData is missing or empty, use an empty array
 
   // Check if iconUrl is a valid URL (not empty or null)
@@ -20,7 +20,7 @@ const BigStockCard = ({ title, name, ticker, price, change, chartData, iconUrl }
       <Text style={{ color: 'green', marginBottom: 8 }}>{change > 0 ? `+${change}%` : `${change}%`}</Text>
 
       <View className='items-center justify-center'>
-        {formattedChartData.length > 0 && (
+        {formattedChartData?.length > 0 && (
           <LineChart
             data={{
               datasets: [{ data: formattedChartData }], // Pass the filtered chart data

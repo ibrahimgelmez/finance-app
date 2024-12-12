@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   View,
   Text,
@@ -13,6 +13,14 @@ import {
 import axios from 'axios';
 import Header from '@/components/ui/header';
 import StockCard from '@/components/ui/StockCard';
+
+const debounce = (func, delay) => {
+  let timeout;
+  return (...args) => {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => func(...args), delay);
+  };
+};
 
 const fetchStockPrice = async (symbol) => {
   const options = {
@@ -43,7 +51,7 @@ const fetchStockPrice = async (symbol) => {
   }
 };
 
-const Discovery = () => {
+const Search = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [stockData, setStockData] = useState([]);
   const [newsData, setNewsData] = useState([]);
@@ -57,30 +65,31 @@ const Discovery = () => {
     },
   };
 
-  useEffect(() => {
-    const fetchData = async () => {
+  const fetchData = useCallback(
+    debounce(async (query) => {
+      if (!query) {
+        setStockData([]);
+        setNewsData([]);
+        return;
+      }
+
       setLoading(true);
       setError(null);
 
       try {
-        // Autocomplete API'den verileri al
         const response = await axios.get(
           'https://yahoo-finance166.p.rapidapi.com/api/autocomplete',
           {
-            params: { query: searchTerm || 'AAPL' },
+            params: { query },
             ...rapidApiOptions,
           }
         );
 
-        // Sadece hisseleri (quoteType === 'EQUITY') filtrele
         const quotes = (response.data.quotes || []).filter(
           (quote) => quote.quoteType === 'EQUITY'
         );
 
-        setStockData(quotes); // Filtrelenmiş hisseleri state'e kaydet
-        setNewsData(response.data.news || []);
-
-        // Her bir sembol için fiyat bilgisi al
+        // Fiyat bilgisi eksik olanlar için sorgu
         const priceDataPromises = quotes.map(async (quote) => {
           const priceData = await fetchStockPrice(quote.symbol);
           return { ...quote, ...priceData };
@@ -88,15 +97,20 @@ const Discovery = () => {
 
         const mergedData = await Promise.all(priceDataPromises);
         setStockData(mergedData);
+
+        setNewsData(response.data.news || []);
       } catch (err) {
         console.error('Error fetching data:', err);
         setError('Error fetching data.');
       } finally {
         setLoading(false);
       }
-    };
+    }, 500),
+    []
+  );
 
-    fetchData();
+  useEffect(() => {
+    fetchData(searchTerm);
   }, [searchTerm]);
 
   const handleSearchChange = (text) => {
@@ -152,14 +166,14 @@ const Discovery = () => {
             stockData.map((stock, index) => (
               <StockCard
                 key={index}
-                name={stock?.shortname || stock?.longname || stock?.symbol} // Stock name
+                name={stock?.shortname || stock?.longname || stock?.symbol}
                 ticker={stock?.symbol}
-                price={stock?.price !== null ? stock?.price.toFixed(2) : 'N/A'}
+                price={stock?.price !== null ? stock?.price?.toFixed(2) : 'N/A'}
                 change={
-                  stock?.change !== null ? stock?.change.toFixed(2) : 'N/A'
+                  stock?.change !== null ? stock?.change?.toFixed(2) : 'N/A'
                 }
-                high={stock?.high !== null ? stock?.high.toFixed(2) : 'N/A'}
-                low={stock?.low !== null ? stock?.low.toFixed(2) : 'N/A'}
+                high={stock?.high !== null ? stock?.high?.toFixed(2) : 'N/A'}
+                low={stock?.low !== null ? stock?.low?.toFixed(2) : 'N/A'}
                 iconUrl={`https://img.logo.dev/ticker/${stock?.symbol}?token=pk_L243nCyGQ6KNbSvmAhSl0A`}
               />
             ))
@@ -175,12 +189,12 @@ const Discovery = () => {
           <Text style={{ fontSize: 18, color: '#FFFFFF', marginBottom: 8 }}>
             News
           </Text>
-          {newsData.length > 0 ? (
-            newsData.map((news, index) => (
+          {newsData?.length > 0 ? (
+            newsData?.map((news, index) => (
               <TouchableOpacity
                 key={index}
                 onPress={() => {
-                  Linking.openURL(news.link);
+                  Linking.openURL(news?.link);
                 }}
                 style={{ marginBottom: 16 }}
               >
@@ -191,7 +205,7 @@ const Discovery = () => {
                 <Text style={{ fontSize: 16, color: '#FFFFFF', marginTop: 8 }}>
                   {news.title}
                 </Text>
-                <Text style={{ color: '#888' }}>{news.publisher}</Text>
+                <Text style={{ color: '#888' }}>{news?.publisher}</Text>
               </TouchableOpacity>
             ))
           ) : (
@@ -203,4 +217,4 @@ const Discovery = () => {
   );
 };
 
-export default Discovery;
+export default Search;
