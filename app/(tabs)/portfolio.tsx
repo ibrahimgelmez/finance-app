@@ -1,11 +1,15 @@
 import React, { useState } from 'react';
 import { View, Text, SafeAreaView, ScrollView, Dimensions } from 'react-native';
+
+//ui elements & chart
 import { LineChart } from 'react-native-chart-kit';
 import DropDownPicker from 'react-native-dropdown-picker';
-import { FontAwesome5 } from '@expo/vector-icons'; // Make sure to install this library
-import Header from '@/components/ui/header';
+
+//icon
+import { FontAwesome5 } from '@expo/vector-icons';
+
+//components
 import PortfolioHeader from '@/components/ui/portfolioHeader';
-import MyStocks from './myStock';
 import MyPositions from '@/components/ui/myPositions';
 
 const screenWidth = Dimensions.get('window').width;

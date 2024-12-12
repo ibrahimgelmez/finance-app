@@ -1,5 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, ScrollView, SafeAreaView, ActivityIndicator, TextInput, Image, TouchableOpacity, Linking } from 'react-native';
+import {
+  View,
+  Text,
+  ScrollView,
+  SafeAreaView,
+  ActivityIndicator,
+  TextInput,
+  Image,
+  TouchableOpacity,
+  Linking,
+} from 'react-native';
 import axios from 'axios';
 import Header from '@/components/ui/header';
 import StockCard from '@/components/ui/StockCard';
@@ -13,7 +23,7 @@ const fetchStockPrice = async (symbol) => {
       symbol,
     },
     headers: {
-      'x-rapidapi-key': 'cd04661eb6msh8638f17e507e7bbp1183c5jsn31d7703d6851',
+      'x-rapidapi-key': 'fb4d2eb4d3msh79aa725ac9fba7bp1ea1ecjsn0973925282e4',
       'x-rapidapi-host': 'yahoo-finance166.p.rapidapi.com',
     },
   };
@@ -42,7 +52,7 @@ const Discovery = () => {
 
   const rapidApiOptions = {
     headers: {
-      'x-rapidapi-key': 'cd04661eb6msh8638f17e507e7bbp1183c5jsn31d7703d6851',
+      'x-rapidapi-key': 'fb4d2eb4d3msh79aa725ac9fba7bp1ea1ecjsn0973925282e4',
       'x-rapidapi-host': 'yahoo-finance166.p.rapidapi.com',
     },
   };
@@ -62,11 +72,13 @@ const Discovery = () => {
           }
         );
 
-    // Sadece hisseleri (quoteType === 'EQUITY') filtrele
-    const quotes = (response.data.quotes || []).filter((quote) => quote.quoteType === 'EQUITY');
+        // Sadece hisseleri (quoteType === 'EQUITY') filtrele
+        const quotes = (response.data.quotes || []).filter(
+          (quote) => quote.quoteType === 'EQUITY'
+        );
 
-    setStockData(quotes); // Filtrelenmiş hisseleri state'e kaydet
-    setNewsData(response.data.news || []);
+        setStockData(quotes); // Filtrelenmiş hisseleri state'e kaydet
+        setNewsData(response.data.news || []);
 
         // Her bir sembol için fiyat bilgisi al
         const priceDataPromises = quotes.map(async (quote) => {
@@ -96,8 +108,14 @@ const Discovery = () => {
       <ScrollView style={{ backgroundColor: '#191a1f', flex: 1 }}>
         <View style={{ backgroundColor: '#1ad392', marginBottom: 4 }}>
           <Header />
-          <View style={{ alignItems: 'center', marginBottom: 24, paddingBottom: 4 }}>
-            <Text style={{ fontSize: 32, fontWeight: 'bold', color: '#FFFFFF' }}>$229,375.25</Text>
+          <View
+            style={{ alignItems: 'center', marginBottom: 24, paddingBottom: 4 }}
+          >
+            <Text
+              style={{ fontSize: 32, fontWeight: 'bold', color: '#FFFFFF' }}
+            >
+              $229,375.25
+            </Text>
             <Text style={{ color: 'white' }}>Balance Available</Text>
           </View>
         </View>
@@ -123,7 +141,9 @@ const Discovery = () => {
 
         {/* Stock Results */}
         <View style={{ marginBottom: 24, paddingHorizontal: 10 }}>
-          <Text style={{ fontSize: 18, color: '#FFFFFF', marginBottom: 8 }}>Stock Results</Text>
+          <Text style={{ fontSize: 18, color: '#FFFFFF', marginBottom: 8 }}>
+            Stock Results
+          </Text>
           {loading ? (
             <ActivityIndicator size="large" color="#FFFFFF" />
           ) : error ? (
@@ -135,20 +155,26 @@ const Discovery = () => {
                 name={stock?.shortname || stock?.longname || stock?.symbol} // Stock name
                 ticker={stock?.symbol}
                 price={stock?.price !== null ? stock?.price.toFixed(2) : 'N/A'}
-                change={stock?.change !== null ? stock?.change.toFixed(2) : 'N/A'}
+                change={
+                  stock?.change !== null ? stock?.change.toFixed(2) : 'N/A'
+                }
                 high={stock?.high !== null ? stock?.high.toFixed(2) : 'N/A'}
                 low={stock?.low !== null ? stock?.low.toFixed(2) : 'N/A'}
                 iconUrl={`https://img.logo.dev/ticker/${stock?.symbol}?token=pk_L243nCyGQ6KNbSvmAhSl0A`}
               />
             ))
           ) : (
-            <Text style={{ color: 'white' }}>No stocks found for "{searchTerm}"</Text>
+            <Text style={{ color: 'white' }}>
+              No stocks found for "{searchTerm}"
+            </Text>
           )}
         </View>
 
         {/* News Results */}
         <View style={{ marginBottom: 24, paddingHorizontal: 10 }}>
-          <Text style={{ fontSize: 18, color: '#FFFFFF', marginBottom: 8 }}>News</Text>
+          <Text style={{ fontSize: 18, color: '#FFFFFF', marginBottom: 8 }}>
+            News
+          </Text>
           {newsData.length > 0 ? (
             newsData.map((news, index) => (
               <TouchableOpacity
@@ -162,7 +188,9 @@ const Discovery = () => {
                   source={{ uri: news.thumbnail?.resolutions[0]?.url }}
                   style={{ width: '100%', height: 150, borderRadius: 8 }}
                 />
-                <Text style={{ fontSize: 16, color: '#FFFFFF', marginTop: 8 }}>{news.title}</Text>
+                <Text style={{ fontSize: 16, color: '#FFFFFF', marginTop: 8 }}>
+                  {news.title}
+                </Text>
                 <Text style={{ color: '#888' }}>{news.publisher}</Text>
               </TouchableOpacity>
             ))
