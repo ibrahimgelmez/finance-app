@@ -3,13 +3,13 @@ import { View, Text, FlatList, ActivityIndicator, TouchableOpacity, SafeAreaView
 import axios from 'axios';
 
 const categories = [
-  { id: 'lowRisk', name: 'En Düşük Riskli', url: 'https://yahoo-finance166.p.rapidapi.com/api/market/get-low-risk' },
-  { id: 'topPerforming', name: 'En İyi Performans Gösteren', url: 'https://yahoo-finance166.p.rapidapi.com/api/market/get-top-performing' },
-  { id: 'highGrowthLarge', name: 'Yüksek Büyüme ve Büyük', url: 'https://yahoo-finance166.p.rapidapi.com/api/market/get-high-growth-large' },
-  { id: 'mostActives', name: 'En Aktifler', url: 'https://yahoo-finance166.p.rapidapi.com/api/market/get-most-actives' },
-  { id: 'trending', name: 'Trend Olanlar', url: 'https://yahoo-finance166.p.rapidapi.com/api/market/get-trending' },
-  { id: 'dayGainers', name: 'Günlük Kazananlar', url: 'https://yahoo-finance166.p.rapidapi.com/api/market/get-day-gainers' },
-  { id: 'wkGainers', name: '52 Haftalık Kazananlar', url: 'https://yahoo-finance166.p.rapidapi.com/api/market/52-wk-gainers' },
+  { id: 'lowRisk', name: 'Lowest Risk', url: 'https://yahoo-finance166.p.rapidapi.com/api/market/get-low-risk' },
+  { id: 'topPerforming', name: 'Top Performing', url: 'https://yahoo-finance166.p.rapidapi.com/api/market/get-top-performing' },
+  { id: 'highGrowthLarge', name: 'High Growth and Large', url: 'https://yahoo-finance166.p.rapidapi.com/api/market/get-high-growth-large' },
+  { id: 'mostActives', name: 'Most Actives', url: 'https://yahoo-finance166.p.rapidapi.com/api/market/get-most-actives' },
+  { id: 'trending', name: 'Trending', url: 'https://yahoo-finance166.p.rapidapi.com/api/market/get-trending' },
+  { id: 'dayGainers', name: 'Day Gainers', url: 'https://yahoo-finance166.p.rapidapi.com/api/market/get-day-gainers' },
+  { id: 'wkGainers', name: '52 Week Gainers', url: 'https://yahoo-finance166.p.rapidapi.com/api/market/52-wk-gainers' },
 ];
 
 const DiscoveryScreen = () => {
@@ -74,7 +74,7 @@ const DiscoveryScreen = () => {
             onPress={() => setSelectedCategory(null)}
             className="bg-gray-500 py-2 px-4 mb-4 rounded-md"
           >
-            <Text className="text-white text-lg font-semibold text-center">Kategori Değiştir</Text>
+            <Text className="text-white text-lg font-semibold text-center">Change Category</Text>
           </TouchableOpacity>
           <Text className="text-2xl font-bold text-center mb-6 text-white">{selectedCategory.name}</Text>
           {loading && <ActivityIndicator size="large" color="#0000ff" className="mt-6" />}
@@ -83,10 +83,10 @@ const DiscoveryScreen = () => {
             keyExtractor={(item, index) => index.toString()}
             renderItem={({ item }) => (
               <View className="bg-white mx-4 my-2 p-4 rounded-lg shadow">
-                <Text className="text-lg font-semibold">{item?.shortName || 'Adı Yok'}</Text>
-                <Text className="text-gray-600">Fiyat: {item?.regularMarketPrice || 'Bilgi Yok'}</Text>
-                <Text className="text-gray-600">52 Haftalık Aralık: {item?.fiftyTwoWeekRange || 'Bilgi Yok'}</Text>
-                <Text className="text-gray-600">Uzun Ad: {item?.longName || 'Bilgi Yok'}</Text>
+                <Text className="text-lg font-semibold">{item?.shortName || 'No Name'}</Text>
+                <Text className="text-gray-600">Price: {item?.regularMarketPrice || 'No Info'}</Text>
+                <Text className="text-gray-600">52 Week Range: {item?.fiftyTwoWeekRange || 'No Info'}</Text>
+                <Text className="text-gray-600">Long Name: {item?.longName || 'No Info'}</Text>
               </View>
             )}
           />

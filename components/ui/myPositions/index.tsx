@@ -99,10 +99,7 @@ const MyPositions = () => {
         ))}
 
         {/* Render the raw data for debugging */}
-        <Text style={{ color: 'white', marginTop: 20 }}>Fetched Data:</Text>
-        <Text style={{ color: 'white', padding: 10 }}>
-          {JSON.stringify(stockData, null, 2)}
-        </Text>
+  
       </ScrollView>
     </SafeAreaView>
   );

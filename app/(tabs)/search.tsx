@@ -48,6 +48,9 @@ const Search = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
+  
+
+
   const rapidApiOptions = {
     headers: {
       'x-rapidapi-key': 'fb4d2eb4d3msh79aa725ac9fba7bp1ea1ecjsn0973925282e4',
@@ -163,12 +166,12 @@ const Search = () => {
         {/* News Results */}
         <View style={{ marginBottom: 24, paddingHorizontal: 10 }}>
           <Text style={{ fontSize: 18, color: '#FFFFFF', marginBottom: 8 }}>News</Text>
-          {newsData.length > 0 ? (
-            newsData.map((news, index) => (
+          {newsData?.length > 0 ? (
+            newsData?.map((news, index) => (
               <TouchableOpacity
                 key={index}
                 onPress={() => {
-                  Linking.openURL(news.link);
+                  Linking.openURL(news?.link);
                 }}
                 style={{ marginBottom: 16 }}
               >
@@ -177,7 +180,7 @@ const Search = () => {
                   style={{ width: '100%', height: 150, borderRadius: 8 }}
                 />
                 <Text style={{ fontSize: 16, color: '#FFFFFF', marginTop: 8 }}>{news.title}</Text>
-                <Text style={{ color: '#888' }}>{news.publisher}</Text>
+                <Text style={{ color: '#888' }}>{news?.publisher}</Text>
               </TouchableOpacity>
             ))
           ) : (
