@@ -1,6 +1,6 @@
 import { Tabs } from 'expo-router';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import StockDetails from './details';
+import StockDetails from '../../components/screens/details';
 import { FontAwesome } from '@expo/vector-icons';
 
 // Create the stack navigator
@@ -23,13 +23,6 @@ function TabBarScreens() {
           tabBarIcon: ({ color }) => (
             <FontAwesome size={28} name="home" color={'gray'} />
           ),
-        }}
-      />
-      <Tabs.Screen
-        name="details"
-        options={{
-          title: 'Details',
-          tabBarStyle: { display: 'none' }, // Tab bar'da görünmesini engeller
         }}
       />
     </Tabs>

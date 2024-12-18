@@ -1,4 +1,5 @@
-import React , {useState} from 'react';
+import { Link } from 'expo-router';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -6,7 +7,6 @@ import {
   TouchableOpacity,
   SafeAreaView,
 } from 'react-native';
-
 
 const RegisterScreen = () => {
   const [name, setName] = useState('');
@@ -44,6 +44,9 @@ const RegisterScreen = () => {
           className="w-full bg-gray-800 text-white p-4 rounded-md mb-6"
           secureTextEntry={true}
         />
+        <Link href="/login" className="bg-green-300">
+          Register
+        </Link>
 
         <TouchableOpacity className="w-full bg-green-500 p-4 rounded-full">
           <Text className="text-white text-center text-lg font-semibold">
