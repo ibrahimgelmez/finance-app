@@ -61,13 +61,13 @@
 //           'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiIyIiwidW5pcXVlX25hbWUiOiJzYWZhayIsIm5iZiI6MTczMTI2NTQ5NSwiZXhwIjoxNzMzODU3NDk1LCJpYXQiOjE3MzEyNjU0OTV9.ZZLP0COxvpy3pDRvN_eQwXWGT6eaOuHaRYtECNmm7cE`,
 //         },
 //       });
-// const fetchWishlistData = async () => {
-//   try {
-//     const response = await fetch('http://154.53.166.2:5024/api/Wishlist', {
-//       headers: {
-//         'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiIxIiwidW5pcXVlX25hbWUiOiJvbWVyaHVybWEiLCJuYmYiOjE3MzIxODUzMTAsImV4cCI6MTczNDc3NzMxMCwiaWF0IjoxNzMyMTg1MzEwfQ._PzHrRSTGOyMlCaGz3Z-fONl1iAWPlbanqUt7II_PbI`,
-//       },
-//     });
+//   const fetchWishlistData = async () => {
+//     try {
+//       const response = await fetch('http://154.53.166.2:5024/api/Wishlist', {
+//         headers: {
+//           'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiIxIiwidW5pcXVlX25hbWUiOiJvbWVyaHVybWEiLCJuYmYiOjE3MzIxODUzMTAsImV4cCI6MTczNDc3NzMxMCwiaWF0IjoxNzMyMTg1MzEwfQ._PzHrRSTGOyMlCaGz3Z-fONl1iAWPlbanqUt7II_PbI`,
+//         },
+//       });
 
 //       if (!response.ok) {
 //         throw new Error(`HTTP error! status: ${response.status}`);

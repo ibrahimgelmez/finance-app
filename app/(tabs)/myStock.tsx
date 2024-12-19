@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, ScrollView, SafeAreaView, ActivityIndicator, StyleSheet } from 'react-native';
+import { View, Text, ScrollView, SafeAreaView, ActivityIndicator, StyleSheet, TouchableOpacity } from 'react-native';
 import StockCard from '@/components/ui/StockCard';
+import { useNavigation } from 'expo-router';
 
 const fetchStockPrice = async (symbol) => {
   const options = {
@@ -70,6 +71,8 @@ const MyStocks = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  const navigation = useNavigation(); 
+
   const fetchStockList = async () => {
     try {
       const response = await fetch('http://154.53.166.2:5024/api/Stock', {
@@ -133,16 +136,22 @@ const MyStocks = () => {
       </View>
 
       <ScrollView contentContainerStyle={styles.container}>
-        {mystockData.map((stock) => (
-          <StockCard
+      {mystockData.map((stock) => (
+          <TouchableOpacity
             key={stock.symbol}
-            name={stock.name}
-            ticker={stock.symbol}
-            price={stock.price !== null ? stock.price.toFixed(2) : 'N/A'}
-            change={stock.change !== null ? stock.change.toFixed(2) : 'N/A'}
-            chartData={stock.chartData}
-            iconUrl={`https://img.logo.dev/ticker/${stock.symbol}?token=pk_L243nCyGQ6KNbSvmAhSl0A`}
-          />
+            onPress={() => navigation.navigate('StockDetails', { stock })}
+            style={styles.card}
+          >
+            <StockCard
+              name={stock.name}
+              ticker={stock.symbol}
+              price={stock.price !== null ? stock.price.toFixed(2) : 'N/A'}
+              change={stock.change !== null ? stock.change.toFixed(2) : 'N/A'}
+              chartData={stock.chartData}
+              iconUrl={`https://img.logo.dev/ticker/${stock.symbol}?token=pk_L243nCyGQ6KNbSvmAhSl0A`}
+            />
+            <Text style={styles.detailsButton}>View Details</Text>
+          </TouchableOpacity>
         ))}
       </ScrollView>
     </SafeAreaView>

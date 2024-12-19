@@ -9,7 +9,7 @@ export function useAuth() {
 }
 
 export function AuthProvider({ children }: React.PropsWithChildren) {
-  const [user, setUser] = useState<string | undefined>('i');
+  const [user, setUser] = useState<string | undefined>('ibo');
   const [userInfo, setUserInfo] = useState<any | undefined>(null);
   const [rememberMe, setRememberMe] = useState(false); // Remember me state
 
@@ -41,13 +41,9 @@ export function AuthProvider({ children }: React.PropsWithChildren) {
         return;
       }
 
-      // Kullanıcı giriş yapmamışsa (login veya register hariç) register'a yönlendir
-      if (!user && rootSegment !== 'register' && rootSegment !== 'login') {
-        router.replace('/login');
-      }
-
-      // Kullanıcı giriş yapmışsa ve tabs dışında bir sayfadaysa ana sayfaya yönlendir
-      if (user && rootSegment !== '(tabs)') {
+      if (!user && rootSegment !== 'auth') {
+        router.replace('/register');
+      } else if (user && rootSegment !== '(tabs)') {
         router.replace('/');
       }
     }, [user, rootSegment])

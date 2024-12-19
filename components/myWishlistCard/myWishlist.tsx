@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, ScrollView, SafeAreaView, ActivityIndicator, StyleSheet } from 'react-native';
+import { View, Text, ScrollView, SafeAreaView, ActivityIndicator, StyleSheet, TouchableOpacity } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import { useStock } from '@/context/stock';
 import BigStockCard from '@/components/bigStockCard';
 
@@ -8,8 +9,9 @@ const MyWishlist = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  const navigation = useNavigation(); // Access navigation
   const { chartData, fetchChartData, stockData, fetchReelData } = useStock();
-  
+
   const formatDate = (date) => date.toISOString().split('T')[0];
 
   const today = new Date();
@@ -20,7 +22,7 @@ const MyWishlist = () => {
     try {
       const response = await fetch('http://154.53.166.2:5024/api/Wishlist', {
         headers: {
-          'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiIxIiwidW5pcXVlX25hbWUiOiJvbWVyaHVybWEiLCJuYmYiOjE3MzIxODUzMTAsImV4cCI6MTczNDc3NzMxMCwiaWF0IjoxNzMyMTg1MzEwfQ._PzHrRSTGOyMlCaGz3Z-fONl1iAWPlbanqUt7II_PbI`,
+          Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiIxIiwidW5pcXVlX25hbWUiOiJvbWVyaHVybWEiLCJuYmYiOjE3MzIxODUzMTAsImV4cCI6MTczNDc3NzMxMCwiaWF0IjoxNzMyMTg1MzEwfQ._PzHrRSTGOyMlCaGz3Z-fONl1iAWPlbanqUt7II_PbI`,
         },
       });
 
@@ -36,10 +38,10 @@ const MyWishlist = () => {
       setWishlistData(data);
 
       data.forEach((stock) => {
-        fetchChartData(stock.symbol, formatDate(yesterday), formatDate(today), "1h");
+        fetchChartData(stock.symbol, formatDate(yesterday), formatDate(today), '1h');
       });
     } catch (error) {
-      setError("Failed to fetch wishlist data.");
+      setError('Failed to fetch wishlist data.');
     } finally {
       setLoading(false);
     }
@@ -67,29 +69,40 @@ const MyWishlist = () => {
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#191a1f' }}>
-    
-
       <ScrollView horizontal contentContainerStyle={styles.container}>
         {wishlistData.map((stock) => {
           const realTimeStock = stockData.find((item) => item.symbol === stock.symbol);
           const marketName = realTimeStock ? realTimeStock.name : stock.symbol;
           const marketCurrentPrice = realTimeStock ? realTimeStock.currentPrice : 'nan';
-          const marketChange =realTimeStock?.priceChangePercent.toFixed(2); 
-          const chartDataForStock = chartData[stock.symbol] || []; // Ensure it's an empty array if undefined
-          
+          const marketChange = realTimeStock?.priceChangePercent?.toFixed(2);
+          const chartDataForStock = chartData[stock.symbol] || [];
+
           return (
-            <BigStockCard
+            <TouchableOpacity
               key={stock?.id}
-              name={marketName}
-              title={marketName}
-              ticker={stock?.symbol}
-              price={marketCurrentPrice} 
-              change={marketChange}
-              chartData={chartDataForStock} // Ensure chart data exists
-              iconUrl={`https://img.logo.dev/ticker/${stock.symbol}?token=pk_L243nCyGQ6KNbSvmAhSl0A`}
-              width={60}
-              height={200}
-            />
+              onPress={() =>
+                navigation.navigate('StockDetails', {
+                  stock: {
+                    ...stock,
+                    price: marketCurrentPrice, // Include price
+                    name: marketName,
+                    change: marketChange,
+                  },
+                })
+              }
+            >
+              <BigStockCard
+                name={marketName}
+                title={marketName}
+                ticker={stock?.symbol}
+                price={marketCurrentPrice}
+                change={marketChange}
+                chartData={chartDataForStock}
+                iconUrl={`https://img.logo.dev/ticker/${stock.symbol}?token=pk_L243nCyGQ6KNbSvmAhSl0A`}
+                width={60}
+                height={200}
+              />
+            </TouchableOpacity>
           );
         })}
       </ScrollView>
@@ -118,7 +131,7 @@ const styles = StyleSheet.create({
   },
   container: {
     padding: 16,
-    backgroundColor:"#191a1f"
+    backgroundColor: '#191a1f',
   },
 });
 
