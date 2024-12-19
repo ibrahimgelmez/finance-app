@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, ScrollView, SafeAreaView, ActivityIndicator, StyleSheet } from 'react-native';
+import { View, Text, ScrollView, SafeAreaView, ActivityIndicator, StyleSheet, TouchableOpacity } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import { useStock } from '@/context/stock';
 import BigStockCard from '@/components/bigStockCard';
 
@@ -8,12 +9,13 @@ const FirstCard = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  const navigation = useNavigation(); // Access navigation
   const { chartData, fetchChartData, stockData, fetchReelData } = useStock();
 
-  // Endeksler için belirlediğimiz semboller
+  // Indices symbols
   const sp500Symbol = '^GSPC';
   const nasdaqSymbol = '^IXIC';
-  const dowSymbol = '^DJI'; 
+  const dowSymbol = '^DJI';
 
   const formatDate = (date) => date.toISOString().split('T')[0];
 
@@ -21,27 +23,26 @@ const FirstCard = () => {
   const yesterday = new Date(today);
   yesterday.setDate(today.getDate() - 1);
 
-  // Verileri çekme fonksiyonu
+  // Fetch indices data
   const fetchIndicesData = async () => {
     try {
-      // Üç sembol için veriyi çekiyoruz
       const symbols = [sp500Symbol, nasdaqSymbol, dowSymbol];
-      
-      symbols.forEach(async (symbol) => {
-        await fetchReelData(symbol); // Gerçek zamanlı veriyi çek
-        fetchChartData(symbol, formatDate(yesterday), formatDate(today), "1h"); // Grafik verisini çek
-      });
 
-      setIndicesData(symbols); // Üç sembolü bir arada tutuyoruz
+      for (const symbol of symbols) {
+        await fetchReelData(symbol); // Fetch real-time data
+        fetchChartData(symbol, formatDate(yesterday), formatDate(today), '1h'); // Fetch chart data
+      }
+
+      setIndicesData(symbols);
     } catch (error) {
-      setError("Veri çekilirken hata oluştu.");
+      setError('An error occurred while fetching data.');
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchIndicesData(); // Veri çekmeyi başlat
+    fetchIndicesData();
   }, []);
 
   if (loading) {
@@ -67,22 +68,35 @@ const FirstCard = () => {
           const realTimeStock = stockData.find((item) => item.symbol === symbol);
           const marketName = realTimeStock ? realTimeStock.name : symbol;
           const marketCurrentPrice = realTimeStock ? realTimeStock.currentPrice : 'N/A';
-          const marketChange = realTimeStock ? realTimeStock.priceChangePercent.toFixed(2) : 0;
-          const chartDataForStock = chartData[symbol] || []; // Grafik verisi
-          
+          const marketChange = realTimeStock ? realTimeStock.priceChangePercent?.toFixed(2) : 0;
+          const chartDataForStock = chartData[symbol] || []; // Chart data
+
           return (
-            <BigStockCard
+            <TouchableOpacity
               key={symbol}
-              name={marketName}
-              title={marketName}
-              ticker={symbol}
-              price={marketCurrentPrice} 
-              change={marketChange}
-              chartData={chartDataForStock} // Grafik verisi
-              iconUrl={null}
-              width={60}
-              height={200}
-            />
+              onPress={() =>
+                navigation.navigate('StockDetails', {
+                  stock: {
+                    symbol,
+                    name: marketName,
+                    price: marketCurrentPrice,
+                    change: marketChange,
+                  },
+                })
+              } // Navigate to StockDetails with data
+            >
+              <BigStockCard
+                name={marketName}
+                title={marketName}
+                ticker={symbol}
+                price={marketCurrentPrice}
+                change={marketChange}
+                chartData={chartDataForStock}
+                iconUrl={null}
+                width={60}
+                height={200}
+              />
+            </TouchableOpacity>
           );
         })}
       </ScrollView>

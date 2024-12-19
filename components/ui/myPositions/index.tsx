@@ -128,6 +128,7 @@ const MyPositions = () => {
         ))}
 
         {/* Render the raw data for debugging */}
+  
       </ScrollView>
     </SafeAreaView>
   );

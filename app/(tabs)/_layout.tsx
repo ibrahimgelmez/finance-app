@@ -1,6 +1,6 @@
 import { Tabs } from 'expo-router';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import StockDetails from '../../components/screens/details';
+import StockDetails from './details';
 import { FontAwesome } from '@expo/vector-icons';
 
 // Create the stack navigator
@@ -11,7 +11,7 @@ function TabBarScreens() {
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: 'green',
+       
         headerShown: false,
       }}
       initialRouteName="index" // Set initial tab
@@ -20,10 +20,15 @@ function TabBarScreens() {
         name="index"
         options={{
           title: 'Home',
-          tabBarIcon: ({ color }) => (
-            <FontAwesome size={28} name="home" color={'gray'} />
-          ),
+         
         }}
+      />
+      <Tabs.Screen
+        name="details"
+        options={{
+          title: 'Details',
+          
+          }}
       />
     </Tabs>
   );
