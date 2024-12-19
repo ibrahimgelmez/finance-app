@@ -21,36 +21,49 @@ const Index = () => {
     { value: 0 },
     { value: 21 },
     { value: 21 },
-   
   ];
 
   return (
-      <SafeAreaView className='flex-1 bg-[#1ad392]  '>
+    <SafeAreaView className="flex-1 bg-[#1ad392]  ">
       <ScrollView style={{ backgroundColor: '#1ad392', flex: 1 }}>
-     <View className='bg-[#1ad392] mb-4 ' >
-      <Header />
-      {/* Header Section */}
-    
-      <View style={{ alignItems: 'center', marginBottom: 24, paddingBottom:4 }}>
-      <Text style={{ fontSize: 32, fontWeight: 'bold', color: '#FFFFFF' }}>$229,375.25</Text>
-      <Text style={{ color: 'white' }}>Balance Available</Text>
-     </View>
-      </View>
+        <View className="bg-[#1ad392] mb-4 ">
+          <Header />
+          {/* Header Section */}
 
-    <FirstCard />
-
-      {/* Wishlist Section */}
-        <View style={{ marginBottom: 24,paddingHorizontal:10, backgroundColor:'#191a1f'   }}>
-        <View className='flex-row items-baseline justify-between'>
-        <Text style={{ fontSize: 18, color: '#FFFFFF', marginBottom: 8 }}>My Wishlist</Text>
-        <FontAwesome name="arrow-right" size={20} color="green" />
+          <View
+            style={{ alignItems: 'center', marginBottom: 24, paddingBottom: 4 }}
+          >
+            <Text
+              style={{ fontSize: 32, fontWeight: 'bold', color: '#FFFFFF' }}
+            >
+              $229,375.25
+            </Text>
+            <Text style={{ color: 'white' }}>Balance Available</Text>
+          </View>
         </View>
-        <MyWishlist />
 
-   <MyStocks />
-      </View>
-    </ScrollView>
-            </SafeAreaView>
+        <FirstCard />
+
+        {/* Wishlist Section */}
+        <View
+          style={{
+            marginBottom: 24,
+            paddingHorizontal: 10,
+            backgroundColor: '#191a1f',
+          }}
+        >
+          <View className="flex-row items-baseline justify-between">
+            <Text style={{ fontSize: 18, color: '#FFFFFF', marginBottom: 8 }}>
+              My Wishlist
+            </Text>
+            <FontAwesome name="arrow-right" size={20} color="green" />
+          </View>
+          <MyWishlist />
+
+          <MyStocks />
+        </View>
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 

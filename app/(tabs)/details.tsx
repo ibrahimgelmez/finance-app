@@ -20,6 +20,8 @@ const StockDetails = ({ route, navigation }) => {
   const [loading, setLoading] = useState(false);
   const { stock } = route.params;
 
+  console.log(stock);
+
   const timeFrameMap = {
     '1D': '1d',
     '1W': '5d',
