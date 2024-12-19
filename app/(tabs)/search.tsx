@@ -13,6 +13,7 @@ import {
 import axios from 'axios';
 import Header from '@/components/ui/header';
 import StockCard from '@/components/ui/StockCard';
+import { useNavigation } from '@react-navigation/native';
 
 const debounce = (func, delay) => {
   let timeout;
@@ -58,6 +59,7 @@ const Search = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
+  const navigation = useNavigation(); // Use navigation
   const rapidApiOptions = {
     headers: {
       'x-rapidapi-key': 'fb4d2eb4d3msh79aa725ac9fba7bp1ea1ecjsn0973925282e4',
@@ -65,6 +67,29 @@ const Search = () => {
     },
   };
 
+  const fetchStockChartData = async (symbol) => {
+    const options = {
+      method: 'GET',
+      url: `https://yahoo-finance166.p.rapidapi.com/api/stock/get-chart`,
+      params: { region: 'US', symbol, interval: '1d', range: '1mo' },
+      headers: {
+        'x-rapidapi-key': 'fb4d2eb4d3msh79aa725ac9fba7bp1ea1ecjsn0973925282e4',
+        'x-rapidapi-host': 'yahoo-finance166.p.rapidapi.com',
+      },
+    };
+  
+    try {
+      const response = await axios.request(options);
+      const data = response.data;
+  
+      console.log('Chart Data Response:', data); // Debug için
+      const chartData = data?.chart?.result?.[0]?.indicators?.quote?.[0]?.close || [];
+      return chartData;
+    } catch (error) {
+      console.error(`Error fetching chart data for ${symbol}:`, error.message);
+      return [];
+    }
+  };
   const fetchData = useCallback(
     debounce(async (query) => {
       if (!query) {
@@ -89,7 +114,6 @@ const Search = () => {
           (quote) => quote.quoteType === 'EQUITY'
         );
 
-        // Fiyat bilgisi eksik olanlar için sorgu
         const priceDataPromises = quotes.map(async (quote) => {
           const priceData = await fetchStockPrice(quote.symbol);
           return { ...quote, ...priceData };
@@ -97,7 +121,6 @@ const Search = () => {
 
         const mergedData = await Promise.all(priceDataPromises);
         setStockData(mergedData);
-
         setNewsData(response.data.news || []);
       } catch (err) {
         console.error('Error fetching data:', err);
@@ -164,18 +187,49 @@ const Search = () => {
             <Text style={{ color: 'red' }}>{error}</Text>
           ) : stockData.length > 0 ? (
             stockData.map((stock, index) => (
-              <StockCard
+              <TouchableOpacity
                 key={index}
-                name={stock?.shortname || stock?.longname || stock?.symbol}
-                ticker={stock?.symbol}
-                price={stock?.price !== null ? stock?.price?.toFixed(2) : 'N/A'}
-                change={
-                  stock?.change !== null ? stock?.change?.toFixed(2) : 'N/A'
+                onPress={async () =>
+                {
+                  const chartData = await fetchStockChartData(stock?.symbol); 
+                  navigation.navigate('StockDetails', {
+                    stock: {
+                      name: stock?.shortname || stock?.longname || stock?.symbol,
+                      ticker: stock?.symbol,
+                      price:
+                      stock?.price !== null
+                      ? stock?.price?.toFixed(2)
+                      : 'N/A',
+                      change:
+                      stock?.change !== null
+                      ? stock?.change?.toFixed(2)
+                      : 'N/A',
+                      high:
+                      stock?.high !== null ? stock?.high?.toFixed(2) : 'N/A',
+                      low: stock?.low !== null ? stock?.low?.toFixed(2) : 'N/A',
+                      chartData,
+                    },
+                  })
                 }
-                high={stock?.high !== null ? stock?.high?.toFixed(2) : 'N/A'}
-                low={stock?.low !== null ? stock?.low?.toFixed(2) : 'N/A'}
-                iconUrl={`https://img.logo.dev/ticker/${stock?.symbol}?token=pk_L243nCyGQ6KNbSvmAhSl0A`}
-              />
+              }
+              >
+                <StockCard
+                  name={stock?.shortname || stock?.longname || stock?.symbol}
+                  ticker={stock?.symbol}
+                  chartData={stock?.chartData || []}
+                  price={
+                    stock?.price !== null ? stock?.price?.toFixed(2) : 'N/A'
+                  }
+                  change={
+                    stock?.change !== null ? stock?.change?.toFixed(2) : 'N/A'
+                  }
+                  high={
+                    stock?.high !== null ? stock?.high?.toFixed(2) : 'N/A'
+                  }
+                  low={stock?.low !== null ? stock?.low?.toFixed(2) : 'N/A'}
+                  iconUrl={`https://img.logo.dev/ticker/${stock?.symbol}?token=pk_L243nCyGQ6KNbSvmAhSl0A`}
+                />
+              </TouchableOpacity>
             ))
           ) : (
             <Text style={{ color: 'white' }}>
