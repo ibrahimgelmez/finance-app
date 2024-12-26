@@ -18,6 +18,7 @@ const MyPositions = () => {
   const [stocks, setStocks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const API_KEY = 'fb4d2eb4d3msh79aa725ac9fba7bp1ea1ecjsn0973925282e4';
 
   const { chartData, fetchChartData } = useStock();
   const navigation = useNavigation();
@@ -64,8 +65,7 @@ const MyPositions = () => {
               symbol: 'TSLA',
             },
             headers: {
-              'x-rapidapi-key':
-                'ba243cc05bmsh5c42b7fb65f59c5p196669jsn1790408ea2e3',
+              'x-rapidapi-key': API_KEY,
               'x-rapidapi-host': 'yahoo-finance166.p.rapidapi.com',
             },
           }
@@ -128,7 +128,6 @@ const MyPositions = () => {
         ))}
 
         {/* Render the raw data for debugging */}
-  
       </ScrollView>
     </SafeAreaView>
   );

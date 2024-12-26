@@ -17,6 +17,8 @@ const screenWidth = Dimensions.get('window').width;
 const Portfolio = () => {
   const [sortOption, setSortOption] = useState('recent');
   const [open, setOpen] = useState(false);
+  const API_KEY = 'fb4d2eb4d3msh79aa725ac9fba7bp1ea1ecjsn0973925282e4';
+
   const [portfolioValue] = useState({
     total: 196548.5,
     change: 66378.49,

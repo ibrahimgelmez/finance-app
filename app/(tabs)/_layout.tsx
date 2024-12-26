@@ -2,6 +2,10 @@ import { Tabs } from 'expo-router';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import StockDetails from './details';
 import { FontAwesome } from '@expo/vector-icons';
+import Ionicons from '@expo/vector-icons/Ionicons';
+import AntDesign from '@expo/vector-icons/AntDesign';
+import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 
 // Create the stack navigator
 const Stack = createNativeStackNavigator();
@@ -29,7 +33,7 @@ function TabBarScreens() {
         options={{
           title: 'Home',
           tabBarIcon: ({ color, size }) => (
-            <FontAwesome name="home" size={size} color={color} />
+            <Ionicons name="home-outline" size={24} color={'white'} />
           ),
         }}
       />
@@ -38,35 +42,49 @@ function TabBarScreens() {
         options={{
           title: 'Portfolio',
           tabBarIcon: ({ color, size }) => (
-            <FontAwesome name="line-chart" size={size} color={color} />
+            <AntDesign name="linechart" size={24} color={'white'} />
           ),
         }}
       />
       <Tabs.Screen
-        name="discover"
+        name="search"
         options={{
           title: 'Discover',
           tabBarIcon: ({ color, size }) => (
-            <FontAwesome name="compass" size={size} color={color} />
+            <Ionicons name="compass" size={24} color={'white'} />
           ),
         }}
       />
       <Tabs.Screen
-        name="more"
+        name="helpCenter"
         options={{
-          title: 'More',
+          title: 'Help',
           tabBarIcon: ({ color, size }) => (
-            <FontAwesome name="ellipsis-h" size={size} color={color} />
+            <FontAwesome5 name="hire-a-helper" size={24} color={'white'} />
           ),
         }}
       />
       <Tabs.Screen
-        name="account"
+        name="myStock"
         options={{
           title: 'Account',
           tabBarIcon: ({ color, size }) => (
-            <FontAwesome name="user" size={size} color={color} />
+            <MaterialIcons name="account-circle" size={24} color={'white'} />
           ),
+        }}
+      />
+      <Tabs.Screen
+        name="details"
+        options={{
+          title: 'Account',
+          tabBarButton: () => null, // Hide icon from tab bar
+        }}
+      />
+      <Tabs.Screen
+        name="discoveryScreen"
+        options={{
+          title: 'Discovery',
+          tabBarButton: () => null, // Hide icon from tab bar
         }}
       />
     </Tabs>
