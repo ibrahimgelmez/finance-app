@@ -116,29 +116,7 @@ export const StockProvider = ({ children }) => {
     }
   };
 
-  // Fetch Trending Stocks
-  const fetchTrendingStocks = async () => {
-    const options = {
-      method: 'GET',
-      headers: {
-        'X-Mboum-Secret': '9wcVbbUiv1oHZSnlmCcdrpQLLFFQhWuNgIUXZ1oddnqGaXdRArQYEnffCv10',
-      },
-    };
-
-    try {
-      const response = await fetch('https://mboum.com/api/v1/tr/trending', options);
-      const result = await response.json();
-
-      if (result?.data?.[0]?.quotes) {
-        setStockData(result.data[0].quotes);
-        setError(null);
-      } else {
-        setError('Trending verileri alınamadı.');
-      }
-    } catch (error) {
-      setError(`Hata: ${error.message}`);
-    }
-  };
+ 
 
   // Function to fetch stock data by name
   const fetchStocksDataByName = async (name) => {
@@ -179,7 +157,7 @@ export const StockProvider = ({ children }) => {
   };
 
   return (
-    <StockContext.Provider value={{ stockData, chartData, fetchStocksData, fetchChartData, fetchTrendingStocks, fetchReelData, fetchStocksDataByName, error }}>
+    <StockContext.Provider value={{ stockData, chartData, fetchStocksData, fetchChartData, fetchReelData, fetchStocksDataByName, error }}>
       {children}
     </StockContext.Provider>
   );

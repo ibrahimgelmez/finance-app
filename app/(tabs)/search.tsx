@@ -192,24 +192,19 @@ const Search = () => {
                 onPress={async () =>
                 {
                   const chartData = await fetchStockChartData(stock?.symbol); 
-                  navigation.navigate('StockDetails', {
-                    stock: {
-                      name: stock?.shortname || stock?.longname || stock?.symbol,
-                      ticker: stock?.symbol,
-                      price:
-                      stock?.price !== null
-                      ? stock?.price?.toFixed(2)
-                      : 'N/A',
-                      change:
-                      stock?.change !== null
-                      ? stock?.change?.toFixed(2)
-                      : 'N/A',
-                      high:
-                      stock?.high !== null ? stock?.high?.toFixed(2) : 'N/A',
-                      low: stock?.low !== null ? stock?.low?.toFixed(2) : 'N/A',
-                      chartData,
-                    },
-                  })
+                 
+                    navigation.navigate('StockDetails', {
+                      stock: {
+                        name: stock?.shortname || stock?.longname || stock?.symbol,
+                        symbol: stock?.symbol,
+                        price: stock?.price !== null ? stock?.price?.toFixed(2) : 'N/A',
+                        change: stock?.change !== null ? stock?.change?.toFixed(2) : 'N/A',
+                        high: stock?.high !== null ? stock?.high?.toFixed(2) : 'N/A',
+                        low: stock?.low !== null ? stock?.low?.toFixed(2) : 'N/A',
+                        chartData,
+                        image: `https://img.logo.dev/ticker/${stock?.symbol}?token=pk_L243nCyGQ6KNbSvmAhSl0A`,
+                      },
+                    });
                 }
               }
               >

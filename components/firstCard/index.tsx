@@ -1,21 +1,22 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, ScrollView, SafeAreaView, ActivityIndicator, StyleSheet, TouchableOpacity } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
 import { useStock } from '@/context/stock';
 import BigStockCard from '@/components/bigStockCard';
+import { useNavigation } from '@react-navigation/native';
+
 
 const FirstCard = () => {
   const [indicesData, setIndicesData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const navigation = useNavigation(); // Access navigation
+  const navigation = useNavigation();
   const { chartData, fetchChartData, stockData, fetchReelData } = useStock();
 
-  // Indices symbols
+  // Endeksler için belirlediğimiz semboller
   const sp500Symbol = '^GSPC';
   const nasdaqSymbol = '^IXIC';
-  const dowSymbol = '^DJI';
+  const dowSymbol = '^DJI'; 
 
   const formatDate = (date) => date.toISOString().split('T')[0];
 
@@ -23,26 +24,27 @@ const FirstCard = () => {
   const yesterday = new Date(today);
   yesterday.setDate(today.getDate() - 1);
 
-  // Fetch indices data
+  // Verileri çekme fonksiyonu
   const fetchIndicesData = async () => {
     try {
+      // Üç sembol için veriyi çekiyoruz
       const symbols = [sp500Symbol, nasdaqSymbol, dowSymbol];
+      
+      symbols.forEach(async (symbol) => {
+        await fetchReelData(symbol); // Gerçek zamanlı veriyi çek
+        fetchChartData(symbol, formatDate(yesterday), formatDate(today), "1h"); // Grafik verisini çek
+      });
 
-      for (const symbol of symbols) {
-        await fetchReelData(symbol); // Fetch real-time data
-        fetchChartData(symbol, formatDate(yesterday), formatDate(today), '1h'); // Fetch chart data
-      }
-
-      setIndicesData(symbols);
+      setIndicesData(symbols); // Üç sembolü bir arada tutuyoruz
     } catch (error) {
-      setError('An error occurred while fetching data.');
+      setError("Veri çekilirken hata oluştu.");
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchIndicesData();
+    fetchIndicesData(); // Veri çekmeyi başlat
   }, []);
 
   if (loading) {
@@ -68,35 +70,37 @@ const FirstCard = () => {
           const realTimeStock = stockData.find((item) => item.symbol === symbol);
           const marketName = realTimeStock ? realTimeStock.name : symbol;
           const marketCurrentPrice = realTimeStock ? realTimeStock.currentPrice : 'N/A';
-          const marketChange = realTimeStock ? realTimeStock.priceChangePercent?.toFixed(2) : 0;
-          const chartDataForStock = chartData[symbol] || []; // Chart data
-
+          const marketChange = realTimeStock ? realTimeStock.priceChangePercent.toFixed(2) : 0;
+          const chartDataForStock = chartData[symbol] || []; // Grafik verisi
+          
           return (
             <TouchableOpacity
+            key={symbol}
+            onPress={() =>
+              navigation.navigate('StockDetails', {
+                stock: {
+                  symbol,
+                  name: marketName,
+                  price: marketCurrentPrice,
+                  change: marketChange,
+                  chartData: chartDataForStock,
+                },
+              })
+            }
+          >
+            <BigStockCard
               key={symbol}
-              onPress={() =>
-                navigation.navigate('StockDetails', {
-                  stock: {
-                    symbol,
-                    name: marketName,
-                    price: marketCurrentPrice,
-                    change: marketChange,
-                  },
-                })
-              } // Navigate to StockDetails with data
-            >
-              <BigStockCard
-                name={marketName}
-                title={marketName}
-                ticker={symbol}
-                price={marketCurrentPrice}
-                change={marketChange}
-                chartData={chartDataForStock}
-                iconUrl={null}
-                width={60}
-                height={200}
+              name={marketName}
+              title={marketName}
+              ticker={symbol}
+              price={marketCurrentPrice} 
+              change={marketChange}
+              chartData={chartDataForStock} // Grafik verisi
+              iconUrl={null}
+              width={60}
+              height={200}
               />
-            </TouchableOpacity>
+              </TouchableOpacity>
           );
         })}
       </ScrollView>

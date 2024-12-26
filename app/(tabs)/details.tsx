@@ -22,7 +22,7 @@ const StockDetails = ({ route, navigation }) => {
   const [recommendationData, setRecommendationData] = useState([]);
   const [financialData, setFinancialData] = useState(null);
   const { stock } = route.params;
-
+console.log(stock);
   const API_KEY = 'fb4d2eb4d3msh79aa725ac9fba7bp1ea1ecjsn0973925282e4';
 
   const [account] = useState({
@@ -149,13 +149,13 @@ const StockDetails = ({ route, navigation }) => {
         <View className="flex flex-row justify-center items-center">
           <View>
             <Image
-              source={{ uri: stock.image }}
+              source={{ uri: stock?.image }}
               className="w-12 h-12 mr-2 rounded-sm"
             />
           </View>
           <View style={styles.stockInfo}>
-            <Text style={styles.stockName}>{stock.name}</Text>
-            <Text style={styles.stockSymbol}>{stock.symbol}</Text>
+            <Text style={styles.stockName}>{stock?.name}</Text>
+            <Text style={styles.stockSymbol}>{stock?.symbol}</Text>
           </View>
         </View>
       </View>
