@@ -28,7 +28,7 @@ const StockDetails = ({ route, navigation }) => {
   const [currentPrice, setCurrentPrice] = useState(null);
   const [previousClose, setPreviousClose] = useState(null);
   const { stock } = route.params;
-
+  console.log(stock);
   const API_KEY = 'fb4d2eb4d3msh79aa725ac9fba7bp1ea1ecjsn0973925282e4';
 
   const [account] = useState({
