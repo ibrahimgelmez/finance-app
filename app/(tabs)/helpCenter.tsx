@@ -5,10 +5,10 @@ import {
   TouchableOpacity,
   ScrollView,
   TextInput,
-  SafeAreaView,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTailwind } from 'nativewind';
+import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 
 const HelpCenter = () => {
   const [selectedTab, setSelectedTab] = useState('FAQ');
@@ -42,53 +42,57 @@ const HelpCenter = () => {
   };
 
   return (
-    <SafeAreaView className="bg-gray-900 flex-1 ">
-      <View className="mx-4">
-        <View className="flex-row justify-between  items-center">
-          <Text className="text-white text-xl font-semibold">Help Center</Text>
-        </View>
-
-        {/* Tabs */}
-        <View className="flex-row mt-4 bg-gray-900  ">
-          <TouchableOpacity
-            onPress={() => setSelectedTab('FAQ')}
-            className="mr-4"
-          >
-            <Text
-              className={`text-lg ${
-                selectedTab === 'FAQ' ? 'text-green-400' : 'text-gray-500'
-              }`}
-            >
-              FAQ
+    <SafeAreaProvider>
+      <SafeAreaView className="bg-gray-900 flex-1 ">
+        <View className="mx-4">
+          <View className="flex-row justify-between  items-center">
+            <Text className="text-white text-xl font-semibold">
+              Help Center
             </Text>
-          </TouchableOpacity>
-        </View>
+          </View>
 
-        {/* Tab Indicator */}
-        <View className="border-b border-gray-700 my-2">
-          <View className="w-1/2 h-1 bg-green-400" />
-        </View>
-
-        {/* FAQ List */}
-        <ScrollView className="mt-4">
-          {faqData.map((item, index) => (
+          {/* Tabs */}
+          <View className="flex-row mt-4 bg-gray-900  ">
             <TouchableOpacity
-              key={index}
-              onPress={() => toggleItem(index)}
-              className="bg-gray-800 mb-2 p-4 rounded-lg"
+              onPress={() => setSelectedTab('FAQ')}
+              className="mr-4"
             >
-              <View className="flex-row justify-between items-center">
-                <Text className="text-white text-base">{item.question}</Text>
-                <Ionicons name="chevron-down" size={20} color="green" />
-              </View>
-              {expandedItem === index && (
-                <Text className="text-gray-400 mt-2">{item.answer}</Text>
-              )}
+              <Text
+                className={`text-lg ${
+                  selectedTab === 'FAQ' ? 'text-green-400' : 'text-gray-500'
+                }`}
+              >
+                FAQ
+              </Text>
             </TouchableOpacity>
-          ))}
-        </ScrollView>
-      </View>
-    </SafeAreaView>
+          </View>
+
+          {/* Tab Indicator */}
+          <View className="border-b border-gray-700 my-2">
+            <View className="w-1/2 h-1 bg-green-400" />
+          </View>
+
+          {/* FAQ List */}
+          <ScrollView className="mt-4">
+            {faqData.map((item, index) => (
+              <TouchableOpacity
+                key={index}
+                onPress={() => toggleItem(index)}
+                className="bg-gray-800 mb-2 p-4 rounded-lg"
+              >
+                <View className="flex-row justify-between items-center">
+                  <Text className="text-white text-base">{item.question}</Text>
+                  <Ionicons name="chevron-down" size={20} color="green" />
+                </View>
+                {expandedItem === index && (
+                  <Text className="text-gray-400 mt-2">{item.answer}</Text>
+                )}
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
+        </View>
+      </SafeAreaView>
+    </SafeAreaProvider>
   );
 };
 
