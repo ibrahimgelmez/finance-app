@@ -3,7 +3,6 @@ import {
   View,
   Text,
   ScrollView,
-  SafeAreaView,
   ActivityIndicator,
   TextInput,
   Image,
@@ -14,6 +13,7 @@ import axios from 'axios';
 import Header from '@/components/ui/header';
 import StockCard from '@/components/ui/StockCard';
 import { useNavigation } from '@react-navigation/native';
+import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 
 const debounce = (func, delay) => {
   let timeout;
@@ -77,13 +77,14 @@ const Search = () => {
         'x-rapidapi-host': 'yahoo-finance166.p.rapidapi.com',
       },
     };
-  
+
     try {
       const response = await axios.request(options);
       const data = response.data;
-  
+
       console.log('Chart Data Response:', data); // Debug için
-      const chartData = data?.chart?.result?.[0]?.indicators?.quote?.[0]?.close || [];
+      const chartData =
+        data?.chart?.result?.[0]?.indicators?.quote?.[0]?.close || [];
       return chartData;
     } catch (error) {
       console.error(`Error fetching chart data for ${symbol}:`, error.message);
@@ -141,128 +142,145 @@ const Search = () => {
   };
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: '#1ad392' }}>
-      <ScrollView style={{ backgroundColor: '#191a1f', flex: 1 }}>
-        <View style={{ backgroundColor: '#1ad392', marginBottom: 4 }}>
-          <Header />
-          <View
-            style={{ alignItems: 'center', marginBottom: 24, paddingBottom: 4 }}
-          >
-            <Text
-              style={{ fontSize: 32, fontWeight: 'bold', color: '#FFFFFF' }}
+    <SafeAreaProvider>
+      <SafeAreaView style={{ flex: 1, backgroundColor: '#1ad392' }}>
+        <ScrollView style={{ backgroundColor: '#191a1f', flex: 1 }}>
+          <View style={{ backgroundColor: '#1ad392', marginBottom: 4 }}>
+            <Header />
+            <View
+              style={{
+                alignItems: 'center',
+                marginBottom: 24,
+                paddingBottom: 4,
+              }}
             >
-              $229,375.25
-            </Text>
-            <Text style={{ color: 'white' }}>Balance Available</Text>
+              <Text
+                style={{ fontSize: 32, fontWeight: 'bold', color: '#FFFFFF' }}
+              >
+                $229,375.25
+              </Text>
+              <Text style={{ color: 'white' }}>Balance Available</Text>
+            </View>
           </View>
-        </View>
 
-        {/* Search Input */}
-        <View style={{ paddingHorizontal: 10, marginBottom: 16 }}>
-          <TextInput
-            style={{
-              height: 40,
-              borderColor: '#1e222a',
-              borderWidth: 1,
-              paddingHorizontal: 10,
-              color: '#FFFFFF',
-              backgroundColor: '#333',
-              borderRadius: 8,
-            }}
-            placeholder="Search for a stock (e.g., Apple)"
-            placeholderTextColor="#888"
-            value={searchTerm}
-            onChangeText={handleSearchChange}
-          />
-        </View>
+          {/* Search Input */}
+          <View style={{ paddingHorizontal: 10, marginBottom: 16 }}>
+            <TextInput
+              style={{
+                height: 40,
+                borderColor: '#1e222a',
+                borderWidth: 1,
+                paddingHorizontal: 10,
+                color: '#FFFFFF',
+                backgroundColor: '#333',
+                borderRadius: 8,
+              }}
+              placeholder="Search for a stock (e.g., Apple)"
+              placeholderTextColor="#888"
+              value={searchTerm}
+              onChangeText={handleSearchChange}
+            />
+          </View>
 
-        {/* Stock Results */}
-        <View style={{ marginBottom: 24, paddingHorizontal: 10 }}>
-          <Text style={{ fontSize: 18, color: '#FFFFFF', marginBottom: 8 }}>
-            Stock Results
-          </Text>
-          {loading ? (
-            <ActivityIndicator size="large" color="#FFFFFF" />
-          ) : error ? (
-            <Text style={{ color: 'red' }}>{error}</Text>
-          ) : stockData.length > 0 ? (
-            stockData.map((stock, index) => (
-              <TouchableOpacity
-                key={index}
-                onPress={async () =>
-                {
-                  const chartData = await fetchStockChartData(stock?.symbol); 
-                 
+          {/* Stock Results */}
+          <View style={{ marginBottom: 24, paddingHorizontal: 10 }}>
+            <Text style={{ fontSize: 18, color: '#FFFFFF', marginBottom: 8 }}>
+              Stock Results
+            </Text>
+            {loading ? (
+              <ActivityIndicator size="large" color="#FFFFFF" />
+            ) : error ? (
+              <Text style={{ color: 'red' }}>{error}</Text>
+            ) : stockData.length > 0 ? (
+              stockData.map((stock, index) => (
+                <TouchableOpacity
+                  key={index}
+                  onPress={async () => {
+                    const chartData = await fetchStockChartData(stock?.symbol);
+
                     navigation.navigate('StockDetails', {
                       stock: {
-                        name: stock?.shortname || stock?.longname || stock?.symbol,
+                        name:
+                          stock?.shortname || stock?.longname || stock?.symbol,
                         symbol: stock?.symbol,
-                        price: stock?.price !== null ? stock?.price?.toFixed(2) : 'N/A',
-                        change: stock?.change !== null ? stock?.change?.toFixed(2) : 'N/A',
-                        high: stock?.high !== null ? stock?.high?.toFixed(2) : 'N/A',
-                        low: stock?.low !== null ? stock?.low?.toFixed(2) : 'N/A',
+                        price:
+                          stock?.price !== null
+                            ? stock?.price?.toFixed(2)
+                            : 'N/A',
+                        change:
+                          stock?.change !== null
+                            ? stock?.change?.toFixed(2)
+                            : 'N/A',
+                        high:
+                          stock?.high !== null
+                            ? stock?.high?.toFixed(2)
+                            : 'N/A',
+                        low:
+                          stock?.low !== null ? stock?.low?.toFixed(2) : 'N/A',
                         chartData,
                         image: `https://img.logo.dev/ticker/${stock?.symbol}?token=pk_L243nCyGQ6KNbSvmAhSl0A`,
                       },
                     });
-                }
-              }
-              >
-                <StockCard
-                  name={stock?.shortname || stock?.longname || stock?.symbol}
-                  ticker={stock?.symbol}
-                  chartData={stock?.chartData || []}
-                  price={
-                    stock?.price !== null ? stock?.price?.toFixed(2) : 'N/A'
-                  }
-                  change={
-                    stock?.change !== null ? stock?.change?.toFixed(2) : 'N/A'
-                  }
-                  high={
-                    stock?.high !== null ? stock?.high?.toFixed(2) : 'N/A'
-                  }
-                  low={stock?.low !== null ? stock?.low?.toFixed(2) : 'N/A'}
-                  iconUrl={`https://img.logo.dev/ticker/${stock?.symbol}?token=pk_L243nCyGQ6KNbSvmAhSl0A`}
-                />
-              </TouchableOpacity>
-            ))
-          ) : (
-            <Text style={{ color: 'white' }}>
-              No stocks found for "{searchTerm}"
-            </Text>
-          )}
-        </View>
+                  }}
+                >
+                  <StockCard
+                    name={stock?.shortname || stock?.longname || stock?.symbol}
+                    ticker={stock?.symbol}
+                    chartData={stock?.chartData || []}
+                    price={
+                      stock?.price !== null ? stock?.price?.toFixed(2) : 'N/A'
+                    }
+                    change={
+                      stock?.change !== null ? stock?.change?.toFixed(2) : 'N/A'
+                    }
+                    high={
+                      stock?.high !== null ? stock?.high?.toFixed(2) : 'N/A'
+                    }
+                    low={stock?.low !== null ? stock?.low?.toFixed(2) : 'N/A'}
+                    iconUrl={`https://img.logo.dev/ticker/${stock?.symbol}?token=pk_L243nCyGQ6KNbSvmAhSl0A`}
+                  />
+                </TouchableOpacity>
+              ))
+            ) : (
+              <Text style={{ color: 'white' }}>
+                No stocks found for "{searchTerm}"
+              </Text>
+            )}
+          </View>
 
-        {/* News Results */}
-        <View style={{ marginBottom: 24, paddingHorizontal: 10 }}>
-          <Text style={{ fontSize: 18, color: '#FFFFFF', marginBottom: 8 }}>
-            News
-          </Text>
-          {newsData?.length > 0 ? (
-            newsData?.map((news, index) => (
-              <TouchableOpacity
-                key={index}
-                onPress={() => {
-                  Linking.openURL(news?.link);
-                }}
-                style={{ marginBottom: 16 }}
-              >
-                <Image
-                  source={{ uri: news.thumbnail?.resolutions[0]?.url }}
-                  style={{ width: '100%', height: 150, borderRadius: 8 }}
-                />
-                <Text style={{ fontSize: 16, color: '#FFFFFF', marginTop: 8 }}>
-                  {news.title}
-                </Text>
-                <Text style={{ color: '#888' }}>{news?.publisher}</Text>
-              </TouchableOpacity>
-            ))
-          ) : (
-            <Text style={{ color: 'white' }}>No news available.</Text>
-          )}
-        </View>
-      </ScrollView>
-    </SafeAreaView>
+          {/* News Results */}
+          <View style={{ marginBottom: 24, paddingHorizontal: 10 }}>
+            <Text style={{ fontSize: 18, color: '#FFFFFF', marginBottom: 8 }}>
+              News
+            </Text>
+            {newsData?.length > 0 ? (
+              newsData?.map((news, index) => (
+                <TouchableOpacity
+                  key={index}
+                  onPress={() => {
+                    Linking.openURL(news?.link);
+                  }}
+                  style={{ marginBottom: 16 }}
+                >
+                  <Image
+                    source={{ uri: news.thumbnail?.resolutions[0]?.url }}
+                    style={{ width: '100%', height: 150, borderRadius: 8 }}
+                  />
+                  <Text
+                    style={{ fontSize: 16, color: '#FFFFFF', marginTop: 8 }}
+                  >
+                    {news.title}
+                  </Text>
+                  <Text style={{ color: '#888' }}>{news?.publisher}</Text>
+                </TouchableOpacity>
+              ))
+            ) : (
+              <Text style={{ color: 'white' }}>No news available.</Text>
+            )}
+          </View>
+        </ScrollView>
+      </SafeAreaView>
+    </SafeAreaProvider>
   );
 };
 
