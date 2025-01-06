@@ -25,13 +25,13 @@ const Index = () => {
 
   return (
     <SafeAreaProvider>
-      <SafeAreaView className="flex-1 bg-[#1ad392]  ">
+      <SafeAreaView className="flex-1 bg-[#1ad392]   ">
         <ScrollView style={{ backgroundColor: '#1ad392' }}>
           <View className="bg-[#1ad392]  ">
             <Header />
             {/* Header Section */}
 
-            <View style={{ alignItems: 'center' }}>
+            <View style={{ alignItems: 'center', paddingVertical: 30 }}>
               <Text
                 style={{ fontSize: 32, fontWeight: 'bold', color: '#FFFFFF' }}
               >
