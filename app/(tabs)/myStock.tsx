@@ -1,5 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, ScrollView, SafeAreaView, ActivityIndicator, StyleSheet, TouchableOpacity } from 'react-native';
+import {
+  View,
+  Text,
+  ScrollView,
+  SafeAreaView,
+  ActivityIndicator,
+  StyleSheet,
+  TouchableOpacity,
+} from 'react-native';
 import StockCard from '@/components/ui/StockCard';
 import { useNavigation } from 'expo-router';
 
@@ -15,10 +23,13 @@ const fetchStockPrice = async (symbol) => {
   };
 
   try {
-    const response = await fetch(`${options.url}?region=${options.params.region}&symbol=${symbol}`, {
-      method: 'GET',
-      headers: options.headers,
-    });
+    const response = await fetch(
+      `${options.url}?region=${options.params.region}&symbol=${symbol}`,
+      {
+        method: 'GET',
+        headers: options.headers,
+      }
+    );
 
     const data = await response.json();
 
@@ -36,7 +47,14 @@ const fetchStockPrice = async (symbol) => {
     };
   } catch (error) {
     console.error(`Error fetching price for ${symbol}:`, error);
-    return { symbol, name: symbol, price: null, change: null, high: null, low: null };
+    return {
+      symbol,
+      name: symbol,
+      price: null,
+      change: null,
+      high: null,
+      low: null,
+    };
   }
 };
 
@@ -52,13 +70,17 @@ const fetchStockChartData = async (symbol) => {
   };
 
   try {
-    const response = await fetch(`${options.url}?region=${options.params.region}&symbol=${symbol}&interval=${options.params.interval}&range=${options.params.range}`, {
-      method: 'GET',
-      headers: options.headers,
-    });
+    const response = await fetch(
+      `${options.url}?region=${options.params.region}&symbol=${symbol}&interval=${options.params.interval}&range=${options.params.range}`,
+      {
+        method: 'GET',
+        headers: options.headers,
+      }
+    );
 
     const data = await response.json();
-    const chartData = data?.chart?.result?.[0]?.indicators?.quote?.[0]?.close || [];
+    const chartData =
+      data?.chart?.result?.[0]?.indicators?.quote?.[0]?.close || [];
     return chartData;
   } catch (error) {
     console.error(`Error fetching chart data for ${symbol}:`, error);
@@ -71,13 +93,13 @@ const MyStocks = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const navigation = useNavigation(); 
+  const navigation = useNavigation();
 
   const fetchStockList = async () => {
     try {
       const response = await fetch('http://154.53.166.2:5024/api/Stock', {
         headers: {
-          'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiIyIiwidW5pcXVlX25hbWUiOiJzYWZhayIsIm5iZiI6MTczMzk1MDEyNSwiZXhwIjoxNzM2NjI4NTI1LCJpYXQiOjE3MzM5NTAxMjV9.hjTa7V8ubqvgdpzLK88miptRS_MtPntCnoX14bixnNY`,
+          Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiIyIiwidW5pcXVlX25hbWUiOiJzYWZhayIsIm5iZiI6MTczMzk1MDEyNSwiZXhwIjoxNzM2NjI4NTI1LCJpYXQiOjE3MzM5NTAxMjV9.hjTa7V8ubqvgdpzLK88miptRS_MtPntCnoX14bixnNY`,
         },
       });
 
@@ -87,7 +109,10 @@ const MyStocks = () => {
 
       const stockList = await response.json();
 
-      console.log('Fetched stock list:', stockList.map(stock => stock.symbol));
+      console.log(
+        'Fetched stock list:',
+        stockList.map((stock) => stock.symbol)
+      );
 
       const enrichedData = await Promise.all(
         stockList.map(async (stock) => {
@@ -114,7 +139,9 @@ const MyStocks = () => {
 
   if (loading) {
     return (
-      <SafeAreaView style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+      <SafeAreaView
+        style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}
+      >
         <ActivityIndicator size="large" color="#000" />
       </SafeAreaView>
     );
@@ -122,7 +149,9 @@ const MyStocks = () => {
 
   if (error) {
     return (
-      <SafeAreaView style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+      <SafeAreaView
+        style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}
+      >
         <Text style={{ color: 'red' }}>{error}</Text>
       </SafeAreaView>
     );
@@ -136,7 +165,7 @@ const MyStocks = () => {
       </View>
 
       <ScrollView contentContainerStyle={styles.container}>
-      {mystockData.map((stock) => (
+        {mystockData.map((stock) => (
           <TouchableOpacity
             key={stock.symbol}
             onPress={() => navigation.navigate('StockDetails', { stock })}
@@ -150,7 +179,6 @@ const MyStocks = () => {
               chartData={stock.chartData}
               iconUrl={`https://img.logo.dev/ticker/${stock.symbol}?token=pk_L243nCyGQ6KNbSvmAhSl0A`}
             />
-            <Text style={styles.detailsButton}>View Details</Text>
           </TouchableOpacity>
         ))}
       </ScrollView>

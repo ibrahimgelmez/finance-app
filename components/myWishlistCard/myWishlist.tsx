@@ -1,5 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, ScrollView, SafeAreaView, ActivityIndicator, StyleSheet, TouchableOpacity } from 'react-native';
+import {
+  View,
+  Text,
+  ScrollView,
+  SafeAreaView,
+  ActivityIndicator,
+  StyleSheet,
+  TouchableOpacity,
+} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useStock } from '@/context/stock';
 import BigStockCard from '@/components/bigStockCard';
@@ -8,6 +16,8 @@ const MyWishlist = () => {
   const [wishlistData, setWishlistData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  const API_KEY = 'fb4d2eb4d3msh79aa725ac9fba7bp1ea1ecjsn0973925282e4';
 
   const navigation = useNavigation(); // Access navigation
   const { chartData, fetchChartData, stockData, fetchReelData } = useStock();
@@ -22,7 +32,7 @@ const MyWishlist = () => {
     try {
       const response = await fetch('http://154.53.166.2:5024/api/Wishlist', {
         headers: {
-          Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiIxIiwidW5pcXVlX25hbWUiOiJvbWVyaHVybWEiLCJuYmYiOjE3MzIxODUzMTAsImV4cCI6MTczNDc3NzMxMCwiaWF0IjoxNzMyMTg1MzEwfQ._PzHrRSTGOyMlCaGz3Z-fONl1iAWPlbanqUt7II_PbI`,
+          Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiIyIiwidW5pcXVlX25hbWUiOiJzYWZhayIsIm5iZiI6MTczNjE1MDIyMSwiZXhwIjoxNzM4ODI4NjIxLCJpYXQiOjE3MzYxNTAyMjF9.QQ_4V4LhDOx_FkQaHcqQ3vcrodzYq0Qs1CBqzA2VjQE`,
         },
       });
 
@@ -38,7 +48,12 @@ const MyWishlist = () => {
       setWishlistData(data);
 
       data.forEach((stock) => {
-        fetchChartData(stock.symbol, formatDate(yesterday), formatDate(today), '1h');
+        fetchChartData(
+          stock.symbol,
+          formatDate(yesterday),
+          formatDate(today),
+          '1h'
+        );
       });
     } catch (error) {
       setError('Failed to fetch wishlist data.');
@@ -53,7 +68,9 @@ const MyWishlist = () => {
 
   if (loading) {
     return (
-      <SafeAreaView style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+      <SafeAreaView
+        style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}
+      >
         <ActivityIndicator size="large" color="#000" />
       </SafeAreaView>
     );
@@ -61,7 +78,9 @@ const MyWishlist = () => {
 
   if (error) {
     return (
-      <SafeAreaView style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+      <SafeAreaView
+        style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}
+      >
         <Text style={{ color: 'red' }}>{error}</Text>
       </SafeAreaView>
     );
@@ -71,9 +90,13 @@ const MyWishlist = () => {
     <SafeAreaView style={{ flex: 1, backgroundColor: '#191a1f' }}>
       <ScrollView horizontal contentContainerStyle={styles.container}>
         {wishlistData.map((stock) => {
-          const realTimeStock = stockData.find((item) => item.symbol === stock.symbol);
+          const realTimeStock = stockData.find(
+            (item) => item.symbol === stock.symbol
+          );
           const marketName = realTimeStock ? realTimeStock.name : stock.symbol;
-          const marketCurrentPrice = realTimeStock ? realTimeStock.currentPrice : 'nan';
+          const marketCurrentPrice = realTimeStock
+            ? realTimeStock.currentPrice
+            : 'nan';
           const marketChange = realTimeStock?.priceChangePercent?.toFixed(2);
           const chartDataForStock = chartData[stock.symbol] || [];
 

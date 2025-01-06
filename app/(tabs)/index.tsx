@@ -25,14 +25,12 @@ const Index = () => {
 
   return (
     <SafeAreaView className="flex-1 bg-[#1ad392]  ">
-      <ScrollView style={{ backgroundColor: '#1ad392', flex: 1 }}>
-        <View className="bg-[#1ad392] mb-4 ">
+      <ScrollView style={{ backgroundColor: '#1ad392' }}>
+        <View className="bg-[#1ad392]  ">
           <Header />
           {/* Header Section */}
 
-          <View
-            style={{ alignItems: 'center', marginBottom: 24, paddingBottom: 4 }}
-          >
+          <View style={{ alignItems: 'center' }}>
             <Text
               style={{ fontSize: 32, fontWeight: 'bold', color: '#FFFFFF' }}
             >
@@ -52,13 +50,13 @@ const Index = () => {
             backgroundColor: '#191a1f',
           }}
         >
-          <View className="flex-row items-baseline justify-between">
+          {/* <View className="flex-row items-baseline justify-between">
             <Text style={{ fontSize: 18, color: '#FFFFFF', marginBottom: 8 }}>
               My Wishlist
             </Text>
             <FontAwesome name="arrow-right" size={20} color="green" />
           </View>
-          <MyWishlist />
+          <MyWishlist /> */}
 
           <MyStocks />
         </View>
